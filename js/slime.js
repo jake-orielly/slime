@@ -2,22 +2,30 @@ document.addEventListener('keydown', keyResponse);
 
 var boardWidth = 8;
 var boardHeight = 8;
-var blocks = [
-    new Block(3,2,[1,0],"block_1"),
-    new Block(3,4,[1,0],"block_1"),
-    new Block(3,6,[0,1],"block_1"),
-    new Block(2,5,[-1,0],"block_1"),
-    new Block(5,5,[0,-1],"block_1")
-];
-var walls = [
-    new Wall(6,0,"wall")
-]
-
-var playerBlocks = [];
+var playerBlocks;
+var blocks;
+var walls;
+var exitTiles;
+var player;
 var offsets = [[0,1],[1,0],[0,-1],[-1,0]];
-var exitTiles = [[6,1],[5,1],[5,0],[7,0],[7,1]];
 
-var player = new Block(0,0,[1,0],"player_1");
+level1();
+
+function level1() {
+    player = new Block(0,0,[1,0],"player_1");
+    playerBlocks = [];
+    blocks = [
+        new Block(3,2,[1,0],"block_1"),
+        new Block(3,4,[1,0],"block_1"),
+        new Block(3,6,[0,1],"block_1"),
+        new Block(2,5,[-1,0],"block_1"),
+        new Block(5,5,[0,-1],"block_1")
+    ];
+    walls = [
+        new Wall(6,0,"wall")
+    ];
+    exitTiles = [[6,1],[5,1],[5,0],[7,0],[7,1]];
+}
 
 function Wall(x,y,img) {
     this.x = x;
@@ -31,7 +39,6 @@ function Block(x,y,slime,img) {
     this.slime = slime;
     this.class = "";
     if (img == "block_1") {
-        console.log(slime == [0,-1]);
         if (compare(slime,[0,-1]))
             this.class = "top";
         else if (compare(slime,[-1,0]))
@@ -51,6 +58,8 @@ function keyResponse(event) {
             movePlayer(0,1);
         else if (event.keyCode == 87)
             movePlayer(-1,0);
+        else if (82)
+            level1(); 
 }
 
 function movePlayer(y,x) {
