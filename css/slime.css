@@ -1,0 +1,30 @@
+.tileItem {
+    position:absolute;
+}
+
+#board td {
+    padding:0;
+    display:inline-block;
+    position:relative;
+}
+
+#player, .block, .exit {
+    position:absolute;
+    left: 0px;
+}
+
+#player, .block {
+    z-index:1;
+}
+
+.top { 
+    transform: rotate(270deg);
+}
+
+.left { 
+    transform: rotate(180deg);
+}
+
+.bottom { 
+    transform: rotate(90deg);
+}
