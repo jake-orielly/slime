@@ -9,11 +9,21 @@ var blocks = [
     new Block(2,5,[-1,0],"block_1"),
     new Block(5,5,[0,-1],"block_1")
 ];
+var walls = [
+    new Wall(6,0,"wall")
+]
+
 var playerBlocks = [];
 var offsets = [[0,1],[1,0],[0,-1],[-1,0]];
-var exitTiles = [[4,4],[3,4],[5,4],[5,5]];
+var exitTiles = [[6,1],[5,1],[5,0],[7,0],[7,1]];
 
 var player = new Block(0,0,[1,0],"player_1");
+
+function Wall(x,y,img) {
+    this.x = x;
+    this.y = y;
+    this.img = "art/" + img + ".png";
+}
 
 function Block(x,y,slime,img) {
     this.x = x;
@@ -55,7 +65,7 @@ function movePlayer(y,x) {
         for (var i = 0; i < playerBlocks.length; i++)
             blockStick(playerBlocks[i]);
         if (checkExit())
-            alert("You Win!");
+            setTimeout(function(){alert("You Win!")} , 50);
     }
 }
 
@@ -86,12 +96,22 @@ function blockCollide(x,y) {
                 return true;
         }
     }
+    for (var i = 0; i < walls.length; i++) {
+        if (player.x + x == walls[i].x && player.y + y == walls[i].y)
+            return true;
+        for (var j = 0; j < playerBlocks.length; j++) {
+            curr = playerBlocks[j];
+            if (curr.x + x == walls[i].x && curr.y + y == walls[i].y)
+                return true;
+        }
+    }
     return false;
 } 
 
 function blockStick(given) {
     for (var i = 0; i < blocks.length; i++)
-        if (given.x + given.slime[0] == blocks[i].x && given.y + given.slime[1] == blocks[i].y) {
+        if (given.x + given.slime[0] == blocks[i].x && given.y + given.slime[1] == blocks[i].y || 
+           given.x == blocks[i].x + blocks[i].slime[0] && given.y == blocks[i].y + blocks[i].slime[1]) {
             playerBlocks.push(blocks[i]);
             blocks.splice(i, 1);
             return;
@@ -133,6 +153,8 @@ function updateBoard() {
         document.getElementById(blocks[i].y + ',' + blocks[i].x).innerHTML += '<img class="block ' + blocks[i].class + '" src=' + blocks[i].img + '>';
     for (var i = 0; i < playerBlocks.length; i++) 
         document.getElementById(playerBlocks[i].y + ',' + playerBlocks[i].x).innerHTML += '<img class="block ' + playerBlocks[i].class + '" src=' + playerBlocks[i].img + '>';
+    for (var i = 0; i < walls.length; i++) 
+        document.getElementById(walls[i].y + ',' + walls[i].x).innerHTML += '<img class="block" src=' + walls[i].img + '>';
     for (var i = 0; i < exitTiles.length; i++) 
         document.getElementById(exitTiles[i][1] + ',' + exitTiles[i][0]).innerHTML += '<img class="exit" src="art/exit.png">';
     document.getElementById(player.y + ',' + player.x).innerHTML += '<img id="player" src=' + player.img + '>';
