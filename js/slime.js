@@ -17,7 +17,7 @@ function level1() {
     player = new Block(0,0,[1,0],"player_1");
     blocks = [
         new Block(3,2,[1,0],"block_1"),
-        new Block(3,4,[1,0],"block_1"),
+        new Block(3,4,[1,0],"bomb_block_1"),
         new Block(3,6,[0,1],"block_1"),
         new Block(2,5,[-1,0],"block_1"),
         new Block(5,5,[0,-1],"block_1")
@@ -98,6 +98,25 @@ function Block(x,y,slime,img) {
         for (var i = 0; i < this.blocks.length; i++)
             this.blocks[i].showBlock();
     }
+
+    this.explode = function() {
+        for (var i = 0; i < this.blocks.length; i++)
+            if (this.blocks[i].img == 'art/bomb_block_1.png') {
+                for (var j = 0; j < this.blocks[i].blocks.length; j++)
+                    this.blocks[i].blocks[j].destroy();
+                this.blocks[i].move(0,0); // Redraw block aka remove visual representation
+                this.blocks.splice(i,1);
+            }
+            else
+                this.blocks[i].explode();
+    }
+
+    this.destroy = function() {
+        blocks.push(this);
+        for (var i = 0; i < this.blocks.length; i++)
+            this.blocks[i].destroy();
+        this.blocks = [];
+    }
 }
 
 function keyResponse(event) {
@@ -115,6 +134,8 @@ function keyResponse(event) {
     }
     else if (event.keyCode == 82)
         level1(); 
+    else if (event.keyCode == 32)
+        player.explode();
 }
 
 function onBoard(x,y) {
