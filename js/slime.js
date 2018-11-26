@@ -8,6 +8,8 @@ var exitTiles;
 var player;
 var offsets = [[0,1],[1,0],[0,-1],[-1,0]];
 var keyToDir = {65:[0,-1],83:[1,0],68:[0,1],87:[-1,0]}; // Maps a keypress code to a direction on the board
+var backgroundTile = '<img src="art/grass.png">';
+var exitTile = '<img class="exit" src="art/exit.png">';
 
 level1();
 
@@ -24,6 +26,7 @@ function level1() {
         new Wall(6,0,"wall")
     ];
     exitTiles = [[6,1],[5,1],[5,0],[7,0],[7,1]];
+    drawBoard();
 }
 
 function Wall(x,y,img) {
@@ -49,6 +52,11 @@ function Block(x,y,slime,img) {
     this.img = "art/" + img + ".png";
 
     this.move = function (given) { // Moves the block in given direction
+        var temp = ""
+        for (var i = 0; i < exitTiles.length; i++)
+            if (compare([this.x,this.y],exitTiles[i]))
+                temp = exitTile;
+        document.getElementById(this.y + ',' + this.x).innerHTML = backgroundTile + temp;
         this.x += given[1];
         this.y += given[0];
     }
@@ -100,6 +108,7 @@ function keyResponse(event) {
         if (!player.blockCollide(x,y) && player.onBoard(x,y)) {
             callOnPlayerBlocks("move",direction); // move all player blocks
             callOnPlayerBlocks("blockStick"); // and stick them
+            player.showBlock();
             if (checkExit())
                 setTimeout(function(){alert("You Win!")} , 50);
         }
@@ -137,16 +146,13 @@ function callOnBlocks(block,funcName,val) { // call the given method on this blo
         callOnBlocks(block.blocks[i], funcName, val);
 }
 
-var mainLoop = setInterval(function() {
-    updateBoard();
-}, 20);
-function updateBoard() {
+function drawBoard() {
     var result = '';
     for (var i = 0; i < boardHeight; i++) {
         result += '<tr>';
         for (var j = 0; j < boardWidth; j++) {
             result += '<td id="' + i + ',' + j + '">';
-            result += '<img src="art/grass.png">';
+            result += backgroundTile;
             result += '</td>';
         }
         result += '</tr>';
@@ -158,7 +164,7 @@ function updateBoard() {
     for (var i = 0; i < walls.length; i++) 
         document.getElementById(walls[i].y + ',' + walls[i].x).innerHTML += '<img class="block" src=' + walls[i].img + '>';
     for (var i = 0; i < exitTiles.length; i++) 
-        document.getElementById(exitTiles[i][1] + ',' + exitTiles[i][0]).innerHTML += '<img class="exit" src="art/exit.png">';
+        document.getElementById(exitTiles[i][1] + ',' + exitTiles[i][0]).innerHTML += exitTile;
     player.showBlock();
 }
 
