@@ -7,7 +7,7 @@ var walls;
 var exitTiles;
 var player;
 var offsets = [[0,1],[1,0],[0,-1],[-1,0]];
-var keyToDir = {65:[0,-1],83:[1,0],68:[0,1],87:[-1,0]};
+var keyToDir = {65:[0,-1],83:[1,0],68:[0,1],87:[-1,0]}; // Maps a keypress code to a direction on the board
 
 level1();
 
@@ -48,42 +48,44 @@ function Block(x,y,slime,img) {
     }
     this.img = "art/" + img + ".png";
 
-    this.move = function (given) {
+    this.move = function (given) { // Moves the block in given direction
         this.x += given[1];
         this.y += given[0];
     }
 
-    this.blockStick = function() {
-        for (var i = 0; i < blocks.length; i++)
+    this.blockStick = function() { // Sticks blocks to other blocks
+        for (var i = 0; i < blocks.length; i++) // Check every free block
+            // if our position + our slime direction is their position
             if (this.x + this.slime[0] == blocks[i].x && this.y + this.slime[1] == blocks[i].y || 
+               // or their position + their slime direction is our position
                this.x == blocks[i].x + blocks[i].slime[0] && this.y == blocks[i].y + blocks[i].slime[1]) {
-                this.blocks.push(blocks[i]);
-                blocks.splice(i, 1);
+                this.blocks.push(blocks[i]); // stick them to this block
+                blocks.splice(i, 1); // remove the stuck block from the list of free blocks
                 return;
             }
     }
 
-    this.onBoard = function(x,y) {
-        for (var i = 0; i < this.blocks.length; i++)
+    this.onBoard = function(x,y) { // checks if move would send us off the board
+        for (var i = 0; i < this.blocks.length; i++) // if any of this block's children are on the board return false
             if (!this.blocks[i].onBoard(x,y))
                 return false;
-        return onBoard(this.x + x,this.y + y);
+        return onBoard(this.x + x,this.y + y); // return whether this block is on the board
     }
 
     this.blockCollide = function(x,y) {
-        for (var i = 0; i < blocks.length; i++)
+        for (var i = 0; i < blocks.length; i++) // if this blocks position + move direction == any free block's position there's a collision
             if (this.x + x == blocks[i].x && this.y + y == blocks[i].y)
                 return true;
-        for (var i = 0; i < walls.length; i++)
+        for (var i = 0; i < walls.length; i++) // if this blocks position + move direction == any wall's position there's a collision
             if (this.x + x == walls[i].x && this.y + y == walls[i].y)
                 return true;
-        for (var i = 0; i < this.blocks.length; i++)
+        for (var i = 0; i < this.blocks.length; i++) // if any of this blocks children collide in the above checks
             if(this.blocks[i].blockCollide(x,y))
                 return true;
         return false;
     } 
 
-    this.showBlock = function() {
+    this.showBlock = function() { // makes all blocks display on the board
         document.getElementById(this.y + ',' + this.x).innerHTML += '<img class="block ' + this.class + '" src=' + this.img + '>';
         for (var i = 0; i < this.blocks.length; i++)
             this.blocks[i].showBlock();
@@ -96,8 +98,8 @@ function keyResponse(event) {
         x = direction[1];
         y = direction[0];
         if (!player.blockCollide(x,y) && player.onBoard(x,y)) {
-            callOnPlayerBlocks("move",direction);
-            callOnPlayerBlocks("blockStick");
+            callOnPlayerBlocks("move",direction); // move all player blocks
+            callOnPlayerBlocks("blockStick"); // and stick them
             if (checkExit())
                 setTimeout(function(){alert("You Win!")} , 50);
         }
@@ -113,12 +115,12 @@ function onBoard(x,y) {
 }
 
 function checkExit() {
-    var temp = exitTiles.slice();
+    var temp = exitTiles.slice(); // temp is a copy of exit tiles 
     function elimTemp(given) {
-        for (var i = 0; i < temp.length; i++)
+        for (var i = 0; i < temp.length; i++) // if this block is on any of temp's tiles remove it from the list
             if (given.x == temp[i][0] && given.y == temp[i][1])
                 temp.splice(i,1);
-        for (var i = 0; i < given.blocks.length; i++)
+        for (var i = 0; i < given.blocks.length; i++) // check this blocks children as well
             elimTemp(given.blocks[i]);
     }
     elimTemp(player);
@@ -129,7 +131,7 @@ function callOnPlayerBlocks(funcName,val=0) {
     callOnBlocks(player,funcName,val);
 }
 
-function callOnBlocks(block,funcName,val) {
+function callOnBlocks(block,funcName,val) { // call the given method on this block and all its children
     block[funcName](val);
     for (var i = 0; i < block.blocks.length; i++)
         callOnBlocks(block.blocks[i], funcName, val);
