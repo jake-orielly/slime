@@ -2,18 +2,17 @@ document.addEventListener('keydown', keyResponse);
 
 var boardWidth = 8;
 var boardHeight = 8;
-var playerBlocks;
 var blocks;
 var walls;
 var exitTiles;
 var player;
 var offsets = [[0,1],[1,0],[0,-1],[-1,0]];
+var keyToDir = {65:[0,-1],83:[1,0],68:[0,1],87:[-1,0]};
 
 level1();
 
 function level1() {
     player = new Block(0,0,[1,0],"player_1");
-    playerBlocks = [];
     blocks = [
         new Block(3,2,[1,0],"block_1"),
         new Block(3,4,[1,0],"block_1"),
@@ -36,6 +35,7 @@ function Wall(x,y,img) {
 function Block(x,y,slime,img) {
     this.x = x;
     this.y = y;
+    this.blocks = [];
     this.slime = slime;
     this.class = "";
     if (img == "block_1") {
@@ -47,35 +47,63 @@ function Block(x,y,slime,img) {
             this.class = "bottom";
     }
     this.img = "art/" + img + ".png";
+
+    this.move = function (given) {
+        this.x += given[1];
+        this.y += given[0];
+    }
+
+    this.blockStick = function() {
+        for (var i = 0; i < blocks.length; i++)
+            if (this.x + this.slime[0] == blocks[i].x && this.y + this.slime[1] == blocks[i].y || 
+               this.x == blocks[i].x + blocks[i].slime[0] && this.y == blocks[i].y + blocks[i].slime[1]) {
+                this.blocks.push(blocks[i]);
+                blocks.splice(i, 1);
+                return;
+            }
+    }
+
+    this.onBoard = function(x,y) {
+        for (var i = 0; i < this.blocks.length; i++)
+            if (!this.blocks[i].onBoard(x,y))
+                return false;
+        return onBoard(this.x + x,this.y + y);
+    }
+
+    this.blockCollide = function(x,y) {
+        for (var i = 0; i < blocks.length; i++)
+            if (this.x + x == blocks[i].x && this.y + y == blocks[i].y)
+                return true;
+        for (var i = 0; i < walls.length; i++)
+            if (this.x + x == walls[i].x && this.y + y == walls[i].y)
+                return true;
+        for (var i = 0; i < this.blocks.length; i++)
+            if(this.blocks[i].blockCollide(x,y))
+                return true;
+        return false;
+    } 
+
+    this.showBlock = function() {
+        document.getElementById(this.y + ',' + this.x).innerHTML += '<img class="block ' + this.class + '" src=' + this.img + '>';
+        for (var i = 0; i < this.blocks.length; i++)
+            this.blocks[i].showBlock();
+    }
 }
 
 function keyResponse(event) {
-        if (event.keyCode == 65)
-            movePlayer(0,-1);
-        else if (event.keyCode == 83)
-            movePlayer(1,0);
-        else if (event.keyCode == 68)
-            movePlayer(0,1);
-        else if (event.keyCode == 87)
-            movePlayer(-1,0);
-        else if (82)
-            level1(); 
-}
-
-function movePlayer(y,x) {
-    if (onBoard(player.x + x, player.y + y) && !blockCollide(x,y) && allOnBoard(x,y)) {
-        player.x += x;
-        player.y += y;
-        for (var i = 0; i < playerBlocks.length; i++) {
-            playerBlocks[i].x += x;
-            playerBlocks[i].y += y;
+    if (event.keyCode in keyToDir) {
+        direction = keyToDir[event.keyCode];
+        x = direction[1];
+        y = direction[0];
+        if (!player.blockCollide(x,y) && player.onBoard(x,y)) {
+            callOnPlayerBlocks("move",direction);
+            callOnPlayerBlocks("blockStick");
+            if (checkExit())
+                setTimeout(function(){alert("You Win!")} , 50);
         }
-        blockStick(player);
-        for (var i = 0; i < playerBlocks.length; i++)
-            blockStick(playerBlocks[i]);
-        if (checkExit())
-            setTimeout(function(){alert("You Win!")} , 50);
     }
+    else if (event.keyCode == 82)
+        level1(); 
 }
 
 function onBoard(x,y) {
@@ -84,62 +112,27 @@ function onBoard(x,y) {
     return false;
 }
 
-function allOnBoard(x,y) {
-    var curr;
-    for (var i = 0; i < playerBlocks.length; i++) {
-        curr = playerBlocks[i];
-        if (!onBoard(curr.y+y,curr.x+x))
-            return false;
-    }
-    return true;
-}
-
-function blockCollide(x,y) {
-    var curr;
-    for (var i = 0; i < blocks.length; i++) {
-        if (player.x + x == blocks[i].x && player.y + y == blocks[i].y)
-            return true;
-        for (var j = 0; j < playerBlocks.length; j++) {
-            curr = playerBlocks[j];
-            if (curr.x + x == blocks[i].x && curr.y + y == blocks[i].y)
-                return true;
-        }
-    }
-    for (var i = 0; i < walls.length; i++) {
-        if (player.x + x == walls[i].x && player.y + y == walls[i].y)
-            return true;
-        for (var j = 0; j < playerBlocks.length; j++) {
-            curr = playerBlocks[j];
-            if (curr.x + x == walls[i].x && curr.y + y == walls[i].y)
-                return true;
-        }
-    }
-    return false;
-} 
-
-function blockStick(given) {
-    for (var i = 0; i < blocks.length; i++)
-        if (given.x + given.slime[0] == blocks[i].x && given.y + given.slime[1] == blocks[i].y || 
-           given.x == blocks[i].x + blocks[i].slime[0] && given.y == blocks[i].y + blocks[i].slime[1]) {
-            playerBlocks.push(blocks[i]);
-            blocks.splice(i, 1);
-            return;
-        }
-}
-
 function checkExit() {
-    var found = 0;
-    for (var i = 0; i < exitTiles.length; i++) {
-        for (var j = 0; j < playerBlocks.length; j++)
-            if (playerBlocks[j].y == exitTiles[i][1] && playerBlocks[j].x == exitTiles[i][0])
-                found++;
-        if (player.y == exitTiles[i][1] && player.x == exitTiles[i][0])
-            found++;
+    var temp = exitTiles.slice();
+    function elimTemp(given) {
+        for (var i = 0; i < temp.length; i++)
+            if (given.x == temp[i][0] && given.y == temp[i][1])
+                temp.splice(i,1);
+        for (var i = 0; i < given.blocks.length; i++)
+            elimTemp(given.blocks[i]);
     }
-    if(found == exitTiles.length)
-        return true;
-    else
-        return false;
+    elimTemp(player);
+    return temp.length == 0;
+}
+
+function callOnPlayerBlocks(funcName,val=0) {
+    callOnBlocks(player,funcName,val);
+}
+
+function callOnBlocks(block,funcName,val) {
+    block[funcName](val);
+    for (var i = 0; i < block.blocks.length; i++)
+        callOnBlocks(block.blocks[i], funcName, val);
 }
 
 var mainLoop = setInterval(function() {
@@ -160,13 +153,11 @@ function updateBoard() {
     document.getElementById("board").innerHTML = result;
     for (var i = 0; i < blocks.length; i++) 
         document.getElementById(blocks[i].y + ',' + blocks[i].x).innerHTML += '<img class="block ' + blocks[i].class + '" src=' + blocks[i].img + '>';
-    for (var i = 0; i < playerBlocks.length; i++) 
-        document.getElementById(playerBlocks[i].y + ',' + playerBlocks[i].x).innerHTML += '<img class="block ' + playerBlocks[i].class + '" src=' + playerBlocks[i].img + '>';
     for (var i = 0; i < walls.length; i++) 
         document.getElementById(walls[i].y + ',' + walls[i].x).innerHTML += '<img class="block" src=' + walls[i].img + '>';
     for (var i = 0; i < exitTiles.length; i++) 
         document.getElementById(exitTiles[i][1] + ',' + exitTiles[i][0]).innerHTML += '<img class="exit" src="art/exit.png">';
-    document.getElementById(player.y + ',' + player.x).innerHTML += '<img id="player" src=' + player.img + '>';
+    player.showBlock();
 }
 
 function compare (arr1,arr2) {
