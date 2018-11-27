@@ -10,12 +10,12 @@ var offsets = [[0,1],[1,0],[0,-1],[-1,0]];
 var keyToDir = {65:[0,-1],83:[1,0],68:[0,1],87:[-1,0]}; // Maps a keypress code to a direction on the board
 var backgroundTile = '<img src="art/grass.png">';
 var exitTile = '<img class="exit" src="art/exit.png">';
+var currLevel = experimental;
 
-experimental();
+currLevel();
 
 function level1() {
     player = new Block(0,0,[1,0],"player_1");
-    player.extended = false;
     blocks = [
         new Block(3,2,[1,0],"block_1"),
         new Block(3,4,[1,0],"block_1"),
@@ -32,6 +32,7 @@ function level1() {
 
 function experimental() {
     player = new Block(0,0,[1,0],"player_1");
+    player.extended = false;
     blocks = [
         new Block(3,2,[1,0],"block_1"),
         new Block(3,4,[1,0],"bomb_block_1"),
@@ -77,7 +78,8 @@ function Block(x,y,slime,img) {
         document.getElementById(this.y + ',' + this.x).innerHTML = backgroundTile + temp;
         this.x += given[1];
         this.y += given[0];
-        
+        for (var i = 0; i < this.blocks.length; i++)
+            this.blocks[i].move(given);
         if (this.head) {
             this.head.move(given);
             this.head.showBlock();
@@ -86,12 +88,12 @@ function Block(x,y,slime,img) {
 
     this.extend = function() { // Extends piston head in given direction
         if (this.head) {
-            this.head.x += this.slime[0];
-            this.head.y += this.slime[1];
-            this.head.showBlock();
+            this.head.move([this.slime[1],this.slime[0]]);
+            this.head.blockStick();
         }
         for (var i = 0; i < this.blocks.length; i++)
             this.blocks[i].extend();
+        player.showBlock();
     }
 
     this.retract = function() { // Retracts piston head
@@ -101,8 +103,8 @@ function Block(x,y,slime,img) {
                 if (compare([this.head.x,this.head.y],exitTiles[i]))
                     temp = exitTile;
             document.getElementById(this.head.y + ',' + this.head.x).innerHTML = backgroundTile + temp;
-            this.head.x += this.slime[0] * -1;
-            this.head.y += this.slime[1] * -1;
+            if (this.head)
+                this.head.move([this.slime[1]*-1,this.slime[0]*-1]);
             this.head.showBlock();
         }
         for (var i = 0; i < this.blocks.length; i++)
@@ -115,10 +117,17 @@ function Block(x,y,slime,img) {
             if (this.x + this.slime[0] == blocks[i].x && this.y + this.slime[1] == blocks[i].y || 
                // or their position + their slime direction is our position
                this.x == blocks[i].x + blocks[i].slime[0] && this.y == blocks[i].y + blocks[i].slime[1]) {
-                this.blocks.push(blocks[i]); // stick them to this block
+                if (!this.head)
+                    this.blocks.push(blocks[i]); // stick them to this block
+                else
+                    this.head.blocks.push(blocks[i]);
                 blocks.splice(i, 1); // remove the stuck block from the list of free blocks
                 return;
             }
+        for (var i = 0; i < this.blocks.length; i++)
+            this.blocks[i].blockStick();
+        if (this.head)
+            this.head.blockStick();
     }
 
     this.onBoard = function(x,y) { // checks if move would send us off the board
@@ -145,6 +154,8 @@ function Block(x,y,slime,img) {
         document.getElementById(this.y + ',' + this.x).innerHTML += '<img class="block ' + this.class + '" src=' + this.img + '>';
         for (var i = 0; i < this.blocks.length; i++)
             this.blocks[i].showBlock();
+        if (this.head)
+            this.head.showBlock();
     }
 
     this.explode = function() {
@@ -152,11 +163,13 @@ function Block(x,y,slime,img) {
             if (this.blocks[i].img == 'art/bomb_block_1.png') {
                 for (var j = 0; j < this.blocks[i].blocks.length; j++)
                     this.blocks[i].blocks[j].destroy();
-                this.blocks[i].move(0,0); // Redraw block aka remove visual representation
+                this.blocks[i].move([0,0]); // Redraw block aka remove visual representation
                 this.blocks.splice(i,1);
             }
             else
                 this.blocks[i].explode();
+        for (var i = 0; i < blocks.length; i++)
+            blocks[i].showBlock();
     }
 
     this.destroy = function() {
@@ -173,15 +186,15 @@ function keyResponse(event) {
         x = direction[1];
         y = direction[0];
         if (!player.blockCollide(x,y) && player.onBoard(x,y)) {
-            callOnPlayerBlocks("move",direction); // move all player blocks
-            callOnPlayerBlocks("blockStick"); // and stick them
+            player.move(direction);
+            player.blockStick();
             player.showBlock();
             if (checkExit())
                 setTimeout(function(){alert("You Win!")} , 50);
         }
     }
     else if (event.keyCode == 82)
-        level1(); 
+        currLevel(); 
     else if (event.keyCode == 32)
         player.explode();
     else if (event.keyCode == 16)
@@ -212,16 +225,6 @@ function checkExit() {
     }
     elimTemp(player);
     return temp.length == 0;
-}
-
-function callOnPlayerBlocks(funcName,val=0) {
-    callOnBlocks(player,funcName,val);
-}
-
-function callOnBlocks(block,funcName,val) { // call the given method on this block and all its children
-    block[funcName](val);
-    for (var i = 0; i < block.blocks.length; i++)
-        callOnBlocks(block.blocks[i], funcName, val);
 }
 
 function drawBoard() {

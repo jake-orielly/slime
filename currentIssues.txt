@@ -1,0 +1,1 @@
+When a block is stuck to a block attached to a bomb and the bomb blows the two are no longer stuck
