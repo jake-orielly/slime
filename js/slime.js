@@ -11,17 +11,37 @@ var keyToDir = {65:[0,-1],83:[1,0],68:[0,1],87:[-1,0]}; // Maps a keypress code 
 var backgroundTile = '<img src="art/grass.png">';
 var exitTile = '<img class="exit" src="art/exit.png">';
 
-level1();
+experimental();
 
 function level1() {
     player = new Block(0,0,[1,0],"player_1");
+    player.extended = false;
     blocks = [
         new Block(3,2,[1,0],"block_1"),
-        new Block(3,4,[1,0],"bomb_block_1"),
+        new Block(3,4,[1,0],"block_1"),
         new Block(3,6,[0,1],"block_1"),
         new Block(2,5,[-1,0],"block_1"),
         new Block(5,5,[0,-1],"block_1")
     ];
+    walls = [
+        new Wall(6,0,"wall")
+    ];
+    exitTiles = [[6,1],[5,1],[5,0],[7,0],[7,1]];
+    drawBoard();
+}
+
+function experimental() {
+    player = new Block(0,0,[1,0],"player_1");
+    blocks = [
+        new Block(3,2,[1,0],"block_1"),
+        new Block(3,4,[1,0],"bomb_block_1"),
+        new Block(2,5,[-1,0],"block_1"),
+        new Block(5,5,[0,-1],"block_1")
+    ];
+    var piston = new Block(3,6,[1,0],"piston_block_1");
+    piston.head = new Block(3,6,[1,0],"piston_head");
+    piston.head.class += "piston_head";
+    blocks.push(piston);
     walls = [
         new Wall(6,0,"wall")
     ];
@@ -41,24 +61,52 @@ function Block(x,y,slime,img) {
     this.blocks = [];
     this.slime = slime;
     this.class = "";
-    if (img == "block_1") {
-        if (compare(slime,[0,-1]))
-            this.class = "top";
-        else if (compare(slime,[-1,0]))
-            this.class = "left";
-        else if (compare(slime, [0,1]))
-            this.class = "bottom";
-    }
+    if (compare(slime,[0,-1]))
+        this.class = "top";
+    else if (compare(slime,[-1,0]))
+        this.class = "left";
+    else if (compare(slime, [0,1]))
+        this.class = "bottom";
     this.img = "art/" + img + ".png";
 
     this.move = function (given) { // Moves the block in given direction
-        var temp = ""
+        var temp = "";
         for (var i = 0; i < exitTiles.length; i++)
             if (compare([this.x,this.y],exitTiles[i]))
                 temp = exitTile;
         document.getElementById(this.y + ',' + this.x).innerHTML = backgroundTile + temp;
         this.x += given[1];
         this.y += given[0];
+        
+        if (this.head) {
+            this.head.move(given);
+            this.head.showBlock();
+        }
+    }
+
+    this.extend = function() { // Extends piston head in given direction
+        if (this.head) {
+            this.head.x += this.slime[0];
+            this.head.y += this.slime[1];
+            this.head.showBlock();
+        }
+        for (var i = 0; i < this.blocks.length; i++)
+            this.blocks[i].extend();
+    }
+
+    this.retract = function() { // Retracts piston head
+        if (this.head) {
+            var temp = "";
+            for (var i = 0; i < exitTiles.length; i++)
+                if (compare([this.head.x,this.head.y],exitTiles[i]))
+                    temp = exitTile;
+            document.getElementById(this.head.y + ',' + this.head.x).innerHTML = backgroundTile + temp;
+            this.head.x += this.slime[0] * -1;
+            this.head.y += this.slime[1] * -1;
+            this.head.showBlock();
+        }
+        for (var i = 0; i < this.blocks.length; i++)
+            this.blocks[i].retract();
     }
 
     this.blockStick = function() { // Sticks blocks to other blocks
@@ -136,6 +184,15 @@ function keyResponse(event) {
         level1(); 
     else if (event.keyCode == 32)
         player.explode();
+    else if (event.keyCode == 16)
+        if (!player.extended) {
+            player.extend();
+            player.extended = true;
+        }
+        else {
+            player.retract();
+            player.extended = false;
+        }
 }
 
 function onBoard(x,y) {

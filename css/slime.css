@@ -14,7 +14,7 @@
 }
 
 #player, .block {
-    z-index:1;
+    z-index:10;
 }
 
 .top { 
@@ -27,4 +27,8 @@
 
 .bottom { 
     transform: rotate(90deg);
+}
+
+.piston_head {
+    z-index: 5;
 }
