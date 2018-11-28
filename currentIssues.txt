@@ -1,0 +1,1 @@
+pistons chains can thwart collision detection

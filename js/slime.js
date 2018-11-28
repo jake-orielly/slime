@@ -32,21 +32,27 @@ function level1() {
 
 function experimental() {
     player = new Block(0,5,[0,1],"player_1");
-    player.extended = false;
     blocks = [
-        new Block(4,4,[0,1],"block_1"),
+        //new Block(4,4,[0,1],"block_1"),
         new Block(3,5,[0,1],"bomb_block_1"),
-        new Block(4,5,[-1,0],"block_1")
+        piston(4,5,[-1,0]),
+        piston(2,5,[0,1])
     ];
-    var piston = new Block(2,5,[0,1],"piston_block_1");
-    piston.head = new Block(2,5,[0,1],"piston_head");
-    piston.head.class += "piston_head";
-    blocks.push(piston);
     walls = [
-        new Wall(6,0,"wall")
+        new Wall(6,0,"wall"),
+        new Wall(7,0,"wall"),
+        new Wall(7,2,"wall")
     ];
     exitTiles = [[6,1],[5,1],[5,0],[7,0],[7,1]];
     drawBoard();
+}
+
+function piston(x,y,slime) {
+    var piston = new Block(x,y,slime,"piston_block_1");
+    piston.head = new Block(x,y,slime,"piston_head");
+    piston.head.class.push("piston_head");
+    piston.extended = false;
+    return piston;
 }
 
 function Wall(x,y,img) {
@@ -60,13 +66,13 @@ function Block(x,y,slime,img) {
     this.y = y;
     this.blocks = [];
     this.slime = slime;
-    this.class = "";
+    this.class = ["block"];
     if (compare(slime,[-1,0]))
-        this.class = "top";
+        this.class.push("top");
     else if (compare(slime,[0,-1]))
-        this.class = "left";
+        this.class.push("left");
     else if (compare(slime, [1,0]))
-        this.class = "bottom";
+        this.class.push("bottom");
     this.img = "art/" + img + ".png";
 
     this.move = function (given, excludes=0) { // Moves the block in given direction
@@ -92,43 +98,49 @@ function Block(x,y,slime,img) {
         document.getElementById(this.y + ',' + this.x).innerHTML = backgroundTile + temp;
     }
 
-    this.extend = function() { // Extends piston head in given direction
+    this.toggle = function(){
         if (this.head) {
-            if (this.head.onBoard(this.slime) && !this.blockCollide(this.slime)) {
-                this.head.move(this.slime);
-                this.head.blockStick();
-                player.extended = true;
-            }
-            //If all blocks except this and it's children could move the opposite direction
-            else if (player.onBoard(arrayNegate(this.slime),this) && !player.blockCollide(arrayNegate(this.slime),this)) {
-                player.move(arrayNegate(this.slime),this.head);
-                player.blockStick();
-                player.extended = true;
-            }
+            if (!this.extended)
+                this.extend();
+            else
+                this.retract();
+            for (var i = 0; i < this.head.blocks.length; i++)
+                this.head.blocks[i].toggle();
         }
         for (var i = 0; i < this.blocks.length; i++)
-            this.blocks[i].extend();
+            this.blocks[i].toggle();
+        this.showBlock();
+    }
+
+    this.extend = function() { // Extends piston head in given direction
+        if (this.head.onBoard(this.slime) && !this.blockCollide(this.slime)) {
+            this.head.move(this.slime);
+            this.head.blockStick();
+            this.extended = true;
+        }
+        //If all blocks except this and it's children could move the opposite direction
+        else if (player.onBoard(arrayNegate(this.slime),this) && !player.blockCollide(arrayNegate(this.slime),this)) {
+            player.move(arrayNegate(this.slime),this.head);
+            player.blockStick();
+            this.extended = true;
+        }
         this.showBlock();
     }
 
     this.retract = function() { // Retracts piston head
-        if (this.head) {
-            var tempDir = arrayNegate(this.slime);
-            if (this.head.onBoard(tempDir) && !this.blockCollide(tempDir)) {
-                this.clear();
-                if (this.head)
-                    this.head.move(arrayNegate(this.slime));
-                this.head.showBlock();
-                player.extended = false;
-            }
-            else if (player.onBoard(this.slime,this) && !player.blockCollide(this.slime,this)) {
-                player.move(this.slime,this.head);
-                player.blockStick();
-                player.extended = false;
-            }
+        var tempDir = arrayNegate(this.slime);
+        if (this.head.onBoard(tempDir) && !this.blockCollide(tempDir)) {
+            this.clear();
+            if (this.head)
+                this.head.move(arrayNegate(this.slime));
+            this.head.showBlock();
+            this.extended = false;
         }
-        for (var i = 0; i < this.blocks.length; i++)
-            this.blocks[i].retract();
+        else if (player.onBoard(this.slime,this) && !player.blockCollide(this.slime,this)) {
+            player.move(this.slime,this.head);
+            player.blockStick();
+            this.extended = false;
+        }
         this.showBlock();
     }
 
@@ -188,7 +200,7 @@ function Block(x,y,slime,img) {
     } 
 
     this.showBlock = function() { // makes all blocks display on the board
-        document.getElementById(this.y + ',' + this.x).innerHTML += '<img class="block ' + this.class + '" src=' + this.img + '>';
+        document.getElementById(this.y + ',' + this.x).innerHTML += '<img class="' + this.class.join(" ") + '" src=' + this.img + '>';
     }
 
     this.explode = function() {
@@ -229,10 +241,7 @@ function keyResponse(event) {
     else if (event.keyCode == 32)
         player.explode();
     else if (event.keyCode == 16)
-        if (!player.extended)
-            player.extend();
-        else
-            player.retract();
+        player.toggle();
 }
 
 function onBoard(x,y) {
@@ -268,7 +277,7 @@ function drawBoard() {
     
     document.getElementById("board").innerHTML = result;
     for (var i = 0; i < blocks.length; i++) 
-        document.getElementById(blocks[i].y + ',' + blocks[i].x).innerHTML += '<img class="block ' + blocks[i].class + '" src=' + blocks[i].img + '>';
+        document.getElementById(blocks[i].y + ',' + blocks[i].x).innerHTML += '<img class="' + blocks[i].class.join(" ") + '" src=' + blocks[i].img + '>';
     for (var i = 0; i < walls.length; i++) 
         document.getElementById(walls[i].y + ',' + walls[i].x).innerHTML += '<img class="block" src=' + walls[i].img + '>';
     for (var i = 0; i < exitTiles.length; i++) 
