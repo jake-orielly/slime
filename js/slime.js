@@ -15,13 +15,13 @@ var currLevel = experimental;
 currLevel();
 
 function level1() {
-    player = new Block(0,0,[1,0],"player_1");
+    player = new Block(0,0,[0,1],"player_1");
     blocks = [
-        new Block(3,2,[1,0],"block_1"),
-        new Block(3,4,[1,0],"block_1"),
-        new Block(3,6,[0,1],"block_1"),
-        new Block(2,5,[-1,0],"block_1"),
-        new Block(5,5,[0,-1],"block_1")
+        new Block(3,2,[0,1],"block_1"),
+        new Block(3,4,[0,1],"block_1"),
+        new Block(3,6,[1,0],"block_1"),
+        new Block(2,5,[0,-1],"block_1"),
+        new Block(5,5,[-1,0],"block_1")
     ];
     walls = [
         new Wall(6,0,"wall")
@@ -31,16 +31,16 @@ function level1() {
 }
 
 function experimental() {
-    player = new Block(0,0,[1,0],"player_1");
+    player = new Block(4,0,[0,1],"player_1");
     player.extended = false;
     blocks = [
-        new Block(3,2,[1,0],"block_1"),
-        new Block(3,4,[1,0],"bomb_block_1"),
-        new Block(2,5,[-1,0],"block_1"),
-        new Block(5,5,[0,-1],"block_1")
+        new Block(3,2,[0,1],"block_1"),
+        new Block(3,4,[0,1],"bomb_block_1"),
+        new Block(2,5,[0,-1],"block_1"),
+        new Block(5,5,[-1,0],"block_1")
     ];
-    var piston = new Block(3,6,[1,0],"piston_block_1");
-    piston.head = new Block(3,6,[1,0],"piston_head");
+    var piston = new Block(2,0,[0,1],"piston_block_1");
+    piston.head = new Block(2,0,[0,1],"piston_head");
     piston.head.class += "piston_head";
     blocks.push(piston);
     walls = [
@@ -62,11 +62,11 @@ function Block(x,y,slime,img) {
     this.blocks = [];
     this.slime = slime;
     this.class = "";
-    if (compare(slime,[0,-1]))
+    if (compare(slime,[-1,0]))
         this.class = "top";
-    else if (compare(slime,[-1,0]))
+    else if (compare(slime,[0,-1]))
         this.class = "left";
-    else if (compare(slime, [0,1]))
+    else if (compare(slime, [1,0]))
         this.class = "bottom";
     this.img = "art/" + img + ".png";
 
@@ -88,8 +88,9 @@ function Block(x,y,slime,img) {
 
     this.extend = function() { // Extends piston head in given direction
         if (this.head) {
-            this.head.move([this.slime[1],this.slime[0]]);
+            this.head.move(this.slime);
             this.head.blockStick();
+            player.extended = true;
         }
         for (var i = 0; i < this.blocks.length; i++)
             this.blocks[i].extend();
@@ -104,8 +105,9 @@ function Block(x,y,slime,img) {
                     temp = exitTile;
             document.getElementById(this.head.y + ',' + this.head.x).innerHTML = backgroundTile + temp;
             if (this.head)
-                this.head.move([this.slime[1]*-1,this.slime[0]*-1]);
+                this.head.move([this.slime[0]*-1,this.slime[1]*-1]);
             this.head.showBlock();
+            player.extended = false;
         }
         for (var i = 0; i < this.blocks.length; i++)
             this.blocks[i].retract();
@@ -114,9 +116,9 @@ function Block(x,y,slime,img) {
     this.blockStick = function() { // Sticks blocks to other blocks
         for (var i = 0; i < blocks.length; i++) // Check every free block
             // if our position + our slime direction is their position
-            if (this.x + this.slime[0] == blocks[i].x && this.y + this.slime[1] == blocks[i].y || 
+            if (this.x + this.slime[1] == blocks[i].x && this.y + this.slime[0] == blocks[i].y || 
                // or their position + their slime direction is our position
-               this.x == blocks[i].x + blocks[i].slime[0] && this.y == blocks[i].y + blocks[i].slime[1]) {
+               this.x == blocks[i].x + blocks[i].slime[1] && this.y == blocks[i].y + blocks[i].slime[0]) {
                 if (!this.head)
                     this.blocks.push(blocks[i]); // stick them to this block
                 else
@@ -130,14 +132,18 @@ function Block(x,y,slime,img) {
             this.head.blockStick();
     }
 
-    this.onBoard = function(x,y) { // checks if move would send us off the board
+    this.onBoard = function(direction) { // checks if move would send us off the board
+        x = direction[1];
+        y = direction[0];
         for (var i = 0; i < this.blocks.length; i++) // if any of this block's children are on the board return false
-            if (!this.blocks[i].onBoard(x,y))
+            if (!this.blocks[i].onBoard(direction))
                 return false;
         return onBoard(this.x + x,this.y + y); // return whether this block is on the board
     }
 
-    this.blockCollide = function(x,y) {
+    this.blockCollide = function(direction) {
+        x = direction[1];
+        y = direction[0];
         for (var i = 0; i < blocks.length; i++) // if this blocks position + move direction == any free block's position there's a collision
             if (this.x + x == blocks[i].x && this.y + y == blocks[i].y)
                 return true;
@@ -145,7 +151,7 @@ function Block(x,y,slime,img) {
             if (this.x + x == walls[i].x && this.y + y == walls[i].y)
                 return true;
         for (var i = 0; i < this.blocks.length; i++) // if any of this blocks children collide in the above checks
-            if(this.blocks[i].blockCollide(x,y))
+            if(this.blocks[i].blockCollide(direction))
                 return true;
         return false;
     } 
@@ -183,9 +189,7 @@ function Block(x,y,slime,img) {
 function keyResponse(event) {
     if (event.keyCode in keyToDir) {
         direction = keyToDir[event.keyCode];
-        x = direction[1];
-        y = direction[0];
-        if (!player.blockCollide(x,y) && player.onBoard(x,y)) {
+        if (!player.blockCollide(direction) && player.onBoard(direction)) {
             player.move(direction);
             player.blockStick();
             player.showBlock();
@@ -198,14 +202,10 @@ function keyResponse(event) {
     else if (event.keyCode == 32)
         player.explode();
     else if (event.keyCode == 16)
-        if (!player.extended) {
+        if (!player.extended)
             player.extend();
-            player.extended = true;
-        }
-        else {
+        else
             player.retract();
-            player.extended = false;
-        }
 }
 
 function onBoard(x,y) {
