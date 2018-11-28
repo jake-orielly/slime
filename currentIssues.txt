@@ -1,2 +1,0 @@
-Piston doesn’t push itself backwards
-bomb doesn’t work if piston is between it and player

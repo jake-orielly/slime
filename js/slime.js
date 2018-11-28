@@ -69,20 +69,27 @@ function Block(x,y,slime,img) {
         this.class = "bottom";
     this.img = "art/" + img + ".png";
 
-    this.move = function (given) { // Moves the block in given direction
+    this.move = function (given, excludes=0) { // Moves the block in given direction
+        this.clear();
+        this.x += given[1];
+        this.y += given[0];
+        for (var i = 0; i < this.blocks.length; i++)
+            if (this.blocks[i] != excludes)
+                this.blocks[i].move(given,excludes);
+        if (this.head && this.head != excludes) {
+            this.head.move(given,excludes);
+        }
+        else if (this.head)
+            this.head.showBlock();
+        this.showBlock();
+    }
+
+    this.clear = function() {
         var temp = "";
         for (var i = 0; i < exitTiles.length; i++)
             if (compare([this.x,this.y],exitTiles[i]))
                 temp = exitTile;
         document.getElementById(this.y + ',' + this.x).innerHTML = backgroundTile + temp;
-        this.x += given[1];
-        this.y += given[0];
-        for (var i = 0; i < this.blocks.length; i++)
-            this.blocks[i].move(given);
-        if (this.head) {
-            this.head.move(given);
-            this.head.showBlock();
-        }
     }
 
     this.extend = function() { // Extends piston head in given direction
@@ -92,33 +99,37 @@ function Block(x,y,slime,img) {
                 this.head.blockStick();
                 player.extended = true;
             }
-            else if (player.onBoard(arrayNegate(direction)))
-                console.log(1);
+            //If all blocks except this and it's children could move the opposite direction
+            else if (player.onBoard(arrayNegate(this.slime),this) && !player.blockCollide(arrayNegate(this.slime),this)) {
+                player.move(arrayNegate(this.slime),this.head);
+                player.blockStick();
+                player.extended = true;
+            }
         }
         for (var i = 0; i < this.blocks.length; i++)
             this.blocks[i].extend();
-        player.showBlock();
+        this.showBlock();
     }
 
     this.retract = function() { // Retracts piston head
         if (this.head) {
             var tempDir = arrayNegate(this.slime);
             if (this.head.onBoard(tempDir) && !this.blockCollide(tempDir)) {
-                var temp = "";
-                for (var i = 0; i < exitTiles.length; i++)
-                    if (compare([this.head.x,this.head.y],exitTiles[i]))
-                        temp = exitTile;
-                document.getElementById(this.head.y + ',' + this.head.x).innerHTML = backgroundTile + temp;
+                this.clear();
                 if (this.head)
                     this.head.move(arrayNegate(this.slime));
                 this.head.showBlock();
                 player.extended = false;
             }
-            else
-                console.log(2);
+            else if (player.onBoard(this.slime,this) && !player.blockCollide(this.slime,this)) {
+                player.move(this.slime,this.head);
+                player.blockStick();
+                player.extended = false;
+            }
         }
         for (var i = 0; i < this.blocks.length; i++)
             this.blocks[i].retract();
+        this.showBlock();
     }
 
     this.blockStick = function() { // Sticks blocks to other blocks
@@ -147,18 +158,18 @@ function Block(x,y,slime,img) {
             this.head.blockStick();
     }
 
-    this.onBoard = function(direction) { // checks if move would send us off the board
+    this.onBoard = function(direction,excludes=0) { // checks if move would send us off the board
         x = direction[1];
         y = direction[0];
         for (var i = 0; i < this.blocks.length; i++) // if any of this block's children are on the board return false
-            if (!this.blocks[i].onBoard(direction))
+            if (this.blocks[i] != excludes && !this.blocks[i].onBoard(direction))
                 return false;
-        if (this.head && !this.head.onBoard(direction))
+        if (this.head && !this.head.onBoard(direction,excludes))
             return false;
         return onBoard(this.x + x,this.y + y); // return whether this block is on the board
     }
 
-    this.blockCollide = function(direction) {
+    this.blockCollide = function(direction, excludes = 0) {
         x = direction[1];
         y = direction[0];
         for (var i = 0; i < blocks.length; i++) // if this blocks position + move direction == any free block's position there's a collision
@@ -168,20 +179,16 @@ function Block(x,y,slime,img) {
             if (this.x + x == walls[i].x && this.y + y == walls[i].y)
                 return true;
         for (var i = 0; i < this.blocks.length; i++) // if any of this blocks children collide in the above checks
-            if(this.blocks[i].blockCollide(direction))
+            if(this.blocks[i] != excludes && this.blocks[i].blockCollide(direction,excludes))
                 return true;
         if (this.head)
-            if (this.head.blockCollide(direction))
+            if (this.head.blockCollide(direction,excludes))
                 return true
         return false;
     } 
 
     this.showBlock = function() { // makes all blocks display on the board
         document.getElementById(this.y + ',' + this.x).innerHTML += '<img class="block ' + this.class + '" src=' + this.img + '>';
-        for (var i = 0; i < this.blocks.length; i++)
-            this.blocks[i].showBlock();
-        if (this.head)
-            this.head.showBlock();
     }
 
     this.explode = function() {
@@ -189,13 +196,13 @@ function Block(x,y,slime,img) {
             if (this.blocks[i].img == 'art/bomb_block_1.png') {
                 for (var j = 0; j < this.blocks[i].blocks.length; j++)
                     this.blocks[i].blocks[j].destroy();
-                this.blocks[i].move([0,0]); // Redraw block aka remove visual representation
+                this.blocks[i].clear();
                 this.blocks.splice(i,1);
             }
             else
                 this.blocks[i].explode();
-        for (var i = 0; i < blocks.length; i++)
-            blocks[i].showBlock();
+        if(this.head)
+            this.head.explode();
     }
 
     this.destroy = function() {
