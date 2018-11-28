@@ -31,17 +31,17 @@ function level1() {
 }
 
 function experimental() {
-    player = new Block(1,5,[0,1],"player_1");
+    player = new Block(0,5,[0,1],"player_1");
     player.extended = false;
     blocks = [
         new Block(4,4,[0,1],"block_1"),
         new Block(3,5,[0,1],"bomb_block_1"),
         new Block(4,5,[-1,0],"block_1")
     ];
-    //var piston = new Block(2,0,[0,1],"piston_block_1");
-    //piston.head = new Block(2,0,[0,1],"piston_head");
-    //piston.head.class += "piston_head";
-    //blocks.push(piston);
+    var piston = new Block(2,5,[0,1],"piston_block_1");
+    piston.head = new Block(2,5,[0,1],"piston_head");
+    piston.head.class += "piston_head";
+    blocks.push(piston);
     walls = [
         new Wall(6,0,"wall")
     ];
@@ -87,9 +87,13 @@ function Block(x,y,slime,img) {
 
     this.extend = function() { // Extends piston head in given direction
         if (this.head) {
-            this.head.move(this.slime);
-            this.head.blockStick();
-            player.extended = true;
+            if (this.head.onBoard(this.slime) && !this.blockCollide(this.slime)) {
+                this.head.move(this.slime);
+                this.head.blockStick();
+                player.extended = true;
+            }
+            else if (player.onBoard(arrayNegate(direction)))
+                console.log(1);
         }
         for (var i = 0; i < this.blocks.length; i++)
             this.blocks[i].extend();
@@ -98,15 +102,20 @@ function Block(x,y,slime,img) {
 
     this.retract = function() { // Retracts piston head
         if (this.head) {
-            var temp = "";
-            for (var i = 0; i < exitTiles.length; i++)
-                if (compare([this.head.x,this.head.y],exitTiles[i]))
-                    temp = exitTile;
-            document.getElementById(this.head.y + ',' + this.head.x).innerHTML = backgroundTile + temp;
-            if (this.head)
-                this.head.move([this.slime[0]*-1,this.slime[1]*-1]);
-            this.head.showBlock();
-            player.extended = false;
+            var tempDir = arrayNegate(this.slime);
+            if (this.head.onBoard(tempDir) && !this.blockCollide(tempDir)) {
+                var temp = "";
+                for (var i = 0; i < exitTiles.length; i++)
+                    if (compare([this.head.x,this.head.y],exitTiles[i]))
+                        temp = exitTile;
+                document.getElementById(this.head.y + ',' + this.head.x).innerHTML = backgroundTile + temp;
+                if (this.head)
+                    this.head.move(arrayNegate(this.slime));
+                this.head.showBlock();
+                player.extended = false;
+            }
+            else
+                console.log(2);
         }
         for (var i = 0; i < this.blocks.length; i++)
             this.blocks[i].retract();
@@ -144,6 +153,8 @@ function Block(x,y,slime,img) {
         for (var i = 0; i < this.blocks.length; i++) // if any of this block's children are on the board return false
             if (!this.blocks[i].onBoard(direction))
                 return false;
+        if (this.head && !this.head.onBoard(direction))
+            return false;
         return onBoard(this.x + x,this.y + y); // return whether this block is on the board
     }
 
@@ -159,6 +170,9 @@ function Block(x,y,slime,img) {
         for (var i = 0; i < this.blocks.length; i++) // if any of this blocks children collide in the above checks
             if(this.blocks[i].blockCollide(direction))
                 return true;
+        if (this.head)
+            if (this.head.blockCollide(direction))
+                return true
         return false;
     } 
 
@@ -262,4 +276,8 @@ function compare (arr1,arr2) {
         if (arr1[i] != arr2[i])
             return false;
     return true;
+}
+
+function arrayNegate(array) {
+    return array.map(function(x){return x*-1});
 }
