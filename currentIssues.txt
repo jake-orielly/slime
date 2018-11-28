@@ -1,2 +1,2 @@
-When a block is stuck to a block attached to a bomb and the bomb blows the two are no longer stuck
+Piston doesn’t push itself backwards
 bomb doesn’t work if piston is between it and player

@@ -31,18 +31,17 @@ function level1() {
 }
 
 function experimental() {
-    player = new Block(4,0,[0,1],"player_1");
+    player = new Block(1,5,[0,1],"player_1");
     player.extended = false;
     blocks = [
-        new Block(3,2,[0,1],"block_1"),
-        new Block(3,4,[0,1],"bomb_block_1"),
-        new Block(2,5,[0,-1],"block_1"),
-        new Block(5,5,[-1,0],"block_1")
+        new Block(4,4,[0,1],"block_1"),
+        new Block(3,5,[0,1],"bomb_block_1"),
+        new Block(4,5,[-1,0],"block_1")
     ];
-    var piston = new Block(2,0,[0,1],"piston_block_1");
-    piston.head = new Block(2,0,[0,1],"piston_head");
-    piston.head.class += "piston_head";
-    blocks.push(piston);
+    //var piston = new Block(2,0,[0,1],"piston_block_1");
+    //piston.head = new Block(2,0,[0,1],"piston_head");
+    //piston.head.class += "piston_head";
+    //blocks.push(piston);
     walls = [
         new Wall(6,0,"wall")
     ];
@@ -115,15 +114,22 @@ function Block(x,y,slime,img) {
 
     this.blockStick = function() { // Sticks blocks to other blocks
         for (var i = 0; i < blocks.length; i++) // Check every free block
+            // if this block isn't stuck to us (no infinite loops) and 
+            if (blocks[i].blocks.indexOf(this) == -1 && 
             // if our position + our slime direction is their position
-            if (this.x + this.slime[1] == blocks[i].x && this.y + this.slime[0] == blocks[i].y || 
-               // or their position + their slime direction is our position
-               this.x == blocks[i].x + blocks[i].slime[1] && this.y == blocks[i].y + blocks[i].slime[0]) {
-                if (!this.head)
+            (this.x + this.slime[1] == blocks[i].x && this.y + this.slime[0] == blocks[i].y || 
+            // or their position + their slime direction is our position
+            this.x == blocks[i].x + blocks[i].slime[1] && this.y == blocks[i].y + blocks[i].slime[0])) {
+                if (!this.head) {
                     this.blocks.push(blocks[i]); // stick them to this block
-                else
+                    blocks.splice(i, 1); // remove the stuck block from the list of free blocks
+                    this.blocks[0].blockStick();
+                }
+                else {
                     this.head.blocks.push(blocks[i]);
-                blocks.splice(i, 1); // remove the stuck block from the list of free blocks
+                    blocks.splice(i, 1); // remove the stuck block from the list of free blocks
+                    this.head.blocks[0].blockStick();
+                }
                 return;
             }
         for (var i = 0; i < this.blocks.length; i++)
