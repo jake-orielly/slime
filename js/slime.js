@@ -12,9 +12,21 @@ var backgroundTile = '<img src="art/grass.png">';
 var exitTile = '<img class="exit" src="art/exit.png">';
 //var currLevel = slimex2;
 //var currLevel = movingParts;
-var currLevel = pistonDeSync;
+var currLevel = slimex2;
 
 currLevel();
+
+function blockKey(x,y) {
+    return "" + x + "," + y;
+}
+
+var temp = {};
+var key;
+for (var i = 0; i < blocks.length; i++) {
+    key = blockKey(blocks[i].x,blocks[i].y);
+    temp[key] = blocks[i];
+}
+var blocks2 = temp;
 
 
 function piston(x,y,slime) {
@@ -44,6 +56,10 @@ function Block(x,y,slime,img) {
     else if (compare(slime, [1,0]))
         this.class.push("bottom");
     this.img = "art/" + img + ".png";
+
+    this.slimeKey = function() {
+        return blockKey(this.x + this.slime[1], this.y + this.slime[0]);
+    }
 
     this.move = function (given, excludes=0) { // Moves the block in given direction
         this.clear();
@@ -87,11 +103,15 @@ function Block(x,y,slime,img) {
         if (this.head.onBoard(this.slime) && !this.blockCollide(this.slime)) {
             this.head.move(this.slime);
             this.extended = true;
+            if (checkExit())
+                setTimeout(function(){alert("You Win!")} , 50);
         }
         //If all blocks except this and it's children could move the opposite direction
         else if (player.onBoard(arrayNegate(this.slime),this) && !player.blockCollide(arrayNegate(this.slime),this)) {
             player.move(arrayNegate(this.slime),this.head);
             this.extended = true;
+            if (checkExit())
+                setTimeout(function(){alert("You Win!")} , 50);
         }
         this.showBlock();
     }
@@ -104,10 +124,14 @@ function Block(x,y,slime,img) {
                 this.head.move(arrayNegate(this.slime));
             this.head.showBlock();
             this.extended = false;
+            if (checkExit())
+                setTimeout(function(){alert("You Win!")} , 50);
         }
         else if (player.onBoard(this.slime,this) && !player.blockCollide(this.slime,this)) {
             player.move(this.slime,this.head);
             this.extended = false;
+            if (checkExit())
+                setTimeout(function(){alert("You Win!")} , 50);
         }
         this.showBlock();
     }
@@ -232,7 +256,6 @@ function checkExit() {
             elimTemp(given.head);
     }
     elimTemp(player);
-    console.log(temp);
     return temp.length == 0;
 }
 
