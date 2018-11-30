@@ -34,8 +34,8 @@ function movingParts() {
     player = new Block(0,5,[0,1],"player_1");
     blocks = [
         //new Block(4,4,[0,1],"block_1"),
-        new Block(3,5,[0,1],"bomb_block_1"),
-        piston(4,5,[-1,0]),
+        new Block(4,5,[0,1],"bomb_block_1"),
+        piston(5,5,[-1,0]),
         piston(2,5,[0,1])
     ];
     walls = [
@@ -48,14 +48,28 @@ function movingParts() {
 }
 
 function slimex2() {
-    player = new Block(0,5,[0,1],"player_1");
+    player = new Block(1,5,[0,1],"player_2");
     blocks = [
         new Block(3,0,[0,1],"block"),
         new Block(5,3,[0,1],"block"),
         new Block(3,3,[0,1],"block_2"),
+        new Block(5,5,[0,1],"block")
     ];
     walls = [
     ];
     exitTiles = [[6,1],[5,1],[5,0],[7,0],[7,1]];
+    drawBoard();
+}
+
+function pistonDeSync() {
+    player = new Block(1,5,[0,1],"player_1");
+    blocks = [
+        new Block(3,3,[-1,0],"bomb_block_1"),
+        new Block(4,6,[],"block"),
+        piston(6,2,[-1,0]),
+        piston(6,5,[0,1])
+    ];
+    walls = [];
+    exitTiles = [[2,2],[3,2],[4,0]];
     drawBoard();
 }

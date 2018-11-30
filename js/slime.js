@@ -10,7 +10,9 @@ var offsets = [[0,1],[1,0],[0,-1],[-1,0]];
 var keyToDir = {65:[0,-1],83:[1,0],68:[0,1],87:[-1,0]}; // Maps a keypress code to a direction on the board
 var backgroundTile = '<img src="art/grass.png">';
 var exitTile = '<img class="exit" src="art/exit.png">';
-var currLevel = slimex2;
+//var currLevel = slimex2;
+//var currLevel = movingParts;
+var currLevel = pistonDeSync;
 
 currLevel();
 
@@ -45,6 +47,7 @@ function Block(x,y,slime,img) {
 
     this.move = function (given, excludes=0) { // Moves the block in given direction
         this.clear();
+        this.blockStick();
         this.x += given[1];
         this.y += given[0];
         for (var i = 0; i < this.blocks.length; i++)
@@ -83,13 +86,11 @@ function Block(x,y,slime,img) {
     this.extend = function() { // Extends piston head in given direction
         if (this.head.onBoard(this.slime) && !this.blockCollide(this.slime)) {
             this.head.move(this.slime);
-            this.head.blockStick();
             this.extended = true;
         }
         //If all blocks except this and it's children could move the opposite direction
         else if (player.onBoard(arrayNegate(this.slime),this) && !player.blockCollide(arrayNegate(this.slime),this)) {
             player.move(arrayNegate(this.slime),this.head);
-            player.blockStick();
             this.extended = true;
         }
         this.showBlock();
@@ -106,7 +107,6 @@ function Block(x,y,slime,img) {
         }
         else if (player.onBoard(this.slime,this) && !player.blockCollide(this.slime,this)) {
             player.move(this.slime,this.head);
-            player.blockStick();
             this.extended = false;
         }
         this.showBlock();
@@ -186,6 +186,8 @@ function Block(x,y,slime,img) {
     }
 
     this.destroy = function() {
+        if (this.extended)
+            this.retract();
         blocks.push(this);
         for (var i = 0; i < this.blocks.length; i++)
             this.blocks[i].destroy();
@@ -196,9 +198,9 @@ function Block(x,y,slime,img) {
 function keyResponse(event) {
     if (event.keyCode in keyToDir) {
         direction = keyToDir[event.keyCode];
+        player.blockStick(); // Workaround for a bug where the player can't move into a block after sticking it, TODO replace
         if (!player.blockCollide(direction) && player.onBoard(direction)) {
             player.move(direction);
-            player.blockStick();
             player.showBlock();
             if (checkExit())
                 setTimeout(function(){alert("You Win!")} , 50);
@@ -226,8 +228,11 @@ function checkExit() {
                 temp.splice(i,1);
         for (var i = 0; i < given.blocks.length; i++) // check this blocks children as well
             elimTemp(given.blocks[i]);
+        if (given.head)
+            elimTemp(given.head);
     }
     elimTemp(player);
+    console.log(temp);
     return temp.length == 0;
 }
 

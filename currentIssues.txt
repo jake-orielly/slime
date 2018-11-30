@@ -1,1 +1,3 @@
 pistons chains can thwart collision detection
+pistons attached head first don’t extend
+piston heads can get stuck together 
