@@ -10,9 +10,10 @@ var offsets = [[0,1],[1,0],[0,-1],[-1,0]];
 var keyToDir = {65:[0,-1],83:[1,0],68:[0,1],87:[-1,0]}; // Maps a keypress code to a direction on the board
 var backgroundTile = '<img src="art/grass.png">';
 var exitTile = '<img class="exit" src="art/exit.png">';
-var currLevel = experimental;
+var currLevel = slimex2;
 
-experimental();
+currLevel();
+
 
 function piston(x,y,slime) {
     var piston = new Block(x,y,slime,"piston_block_1");
@@ -112,7 +113,7 @@ function Block(x,y,slime,img) {
     }
 
     this.blockStick = function() { // Sticks blocks to other blocks
-        for (var i = 0; i < blocks.length; i++) // Check every free block
+        for (var i = 0; i < blocks.length; i++) { // Check every free block 
             // if this block isn't stuck to us (no infinite loops) and 
             if (blocks[i].blocks.indexOf(this) == -1 && 
             // if our position + our slime direction is their position
@@ -122,15 +123,15 @@ function Block(x,y,slime,img) {
                 if (!this.head) {
                     this.blocks.push(blocks[i]); // stick them to this block
                     blocks.splice(i, 1); // remove the stuck block from the list of free blocks
-                    this.blocks[0].blockStick();
+                    this.blockStick();
                 }
                 else {
                     this.head.blocks.push(blocks[i]);
                     blocks.splice(i, 1); // remove the stuck block from the list of free blocks
-                    this.head.blocks[0].blockStick();
+                    this.head.blockStick();
                 }
                 return;
-            }
+            }}
         for (var i = 0; i < this.blocks.length; i++)
             this.blocks[i].blockStick();
         if (this.head)

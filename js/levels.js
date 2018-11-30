@@ -30,7 +30,7 @@ function complexStick() {
     drawBoard();
 }
 
-function experimental() {
+function movingParts() {
     player = new Block(0,5,[0,1],"player_1");
     blocks = [
         //new Block(4,4,[0,1],"block_1"),
@@ -42,6 +42,19 @@ function experimental() {
         new Wall(6,0,"wall"),
         new Wall(7,0,"wall"),
         new Wall(7,2,"wall")
+    ];
+    exitTiles = [[6,1],[5,1],[5,0],[7,0],[7,1]];
+    drawBoard();
+}
+
+function slimex2() {
+    player = new Block(0,5,[0,1],"player_1");
+    blocks = [
+        new Block(3,0,[0,1],"block"),
+        new Block(5,3,[0,1],"block"),
+        new Block(3,3,[0,1],"block_2"),
+    ];
+    walls = [
     ];
     exitTiles = [[6,1],[5,1],[5,0],[7,0],[7,1]];
     drawBoard();
