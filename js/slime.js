@@ -10,9 +10,9 @@ var offsets = [[0,1],[1,0],[0,-1],[-1,0]];
 var keyToDir = {65:[0,-1],83:[1,0],68:[0,1],87:[-1,0]}; // Maps a keypress code to a direction on the board
 var backgroundTile = '<img src="art/grass.png">';
 var exitTile = '<img class="exit" src="art/exit.png">';
-var currLevel = complexStick;
+//var currLevel = complexStick;
 //var currLevel = movingParts;
-//var currLevel = slimex2;
+var currLevel = slimex2;
 
 currLevel();
 
@@ -143,16 +143,20 @@ function Block(x,y,slime,img) {
     }
 
     this.blockStick = function() { // Sticks blocks to other blocks
-        var currKey = this.dirKey(this.slime);
-        var blockPos;
+        var currKey, blockPos;
         // if our position + our slime direction is a block's position
-        if(blocks[currKey])
-            this.doStick(currKey);
+        for (var i = 0; i < this.slime.length; i++) {
+            currKey = this.dirKey(this.slime[i]);
+            if(blocks[currKey])
+                this.doStick(currKey);
+        }
         for (key in blocks) {
-            currKey = blocks[key].dirKey(blocks[key].slime);
-            blockPos = currKey.split(',').map(function(x){return parseInt(x)});
-            if (blockPos[0] == this.x && blockPos[1] == this.y)
-                this.doStick(key);
+            for (var i = 0; i < blocks[key].slime.length; i++) {
+                currKey = blocks[key].dirKey(blocks[key].slime[i]);
+                blockPos = currKey.split(',').map(function(x){return parseInt(x)});
+                if (blockPos[0] == this.x && blockPos[1] == this.y)
+                    this.doStick(key);
+            }
         }
         for (var i = 0; i < this.blocks.length; i++)
             this.blocks[i].blockStick();

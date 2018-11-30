@@ -1,3 +1,4 @@
 pistons chains can thwart collision detection
 pistons attached head first don’t extend
 piston heads can get stuck together 
+When multiple blocks are stuck when moving in dir when block A is in dir from block B block B will disappear (see slime2x level), but will reappear upon moving in any other dir

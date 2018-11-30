@@ -48,12 +48,12 @@ function movingParts() {
 }
 
 function slimex2() {
-    player = new Block(1,5,[0,1],"player_2");
+    player = new Block(1,5,[[0,1],[-1,0]],"player_2");
     blocks = [
-        new Block(3,0,[],"block"),
-        new Block(5,3,[],"block"),
-        new Block(3,3,[[0,1]],"block_2"),
-        new Block(5,5,[],"block")
+        new Block(3,0,[[]],"block"),
+        new Block(5,3,[[]],"block"),
+        new Block(3,3,[[0,1],[-1,0]],"block_2"),
+        new Block(5,5,[[]],"block")
     ];
     walls = [];
     exitTiles = [[6,1],[5,1],[5,0],[7,0],[7,1]];
