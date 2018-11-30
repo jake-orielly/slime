@@ -10,9 +10,9 @@ var offsets = [[0,1],[1,0],[0,-1],[-1,0]];
 var keyToDir = {65:[0,-1],83:[1,0],68:[0,1],87:[-1,0]}; // Maps a keypress code to a direction on the board
 var backgroundTile = '<img src="art/grass.png">';
 var exitTile = '<img class="exit" src="art/exit.png">';
-//var currLevel = slimex2;
+var currLevel = complexStick;
 //var currLevel = movingParts;
-var currLevel = slimex2;
+//var currLevel = slimex2;
 
 currLevel();
 
@@ -26,7 +26,13 @@ for (var i = 0; i < blocks.length; i++) {
     key = blockKey(blocks[i].x,blocks[i].y);
     temp[key] = blocks[i];
 }
-var blocks2 = temp;
+blocks = temp;
+temp = {};
+for (var i = 0; i < walls.length; i++) {
+    key = blockKey(walls[i].x,walls[i].y);
+    temp[key] = walls[i];
+}
+walls = temp;
 
 
 function piston(x,y,slime) {
@@ -57,8 +63,8 @@ function Block(x,y,slime,img) {
         this.class.push("bottom");
     this.img = "art/" + img + ".png";
 
-    this.slimeKey = function() {
-        return blockKey(this.x + this.slime[1], this.y + this.slime[0]);
+    this.dirKey = function(dir) {
+        return blockKey(this.x + dir[1], this.y + dir[0]);
     }
 
     this.move = function (given, excludes=0) { // Moves the block in given direction
@@ -137,29 +143,28 @@ function Block(x,y,slime,img) {
     }
 
     this.blockStick = function() { // Sticks blocks to other blocks
-        for (var i = 0; i < blocks.length; i++) { // Check every free block 
-            // if this block isn't stuck to us (no infinite loops) and 
-            if (blocks[i].blocks.indexOf(this) == -1 && 
-            // if our position + our slime direction is their position
-            (this.x + this.slime[1] == blocks[i].x && this.y + this.slime[0] == blocks[i].y || 
-            // or their position + their slime direction is our position
-            this.x == blocks[i].x + blocks[i].slime[1] && this.y == blocks[i].y + blocks[i].slime[0])) {
-                if (!this.head) {
-                    this.blocks.push(blocks[i]); // stick them to this block
-                    blocks.splice(i, 1); // remove the stuck block from the list of free blocks
-                    this.blockStick();
-                }
-                else {
-                    this.head.blocks.push(blocks[i]);
-                    blocks.splice(i, 1); // remove the stuck block from the list of free blocks
-                    this.head.blockStick();
-                }
-                return;
-            }}
+        var currKey = this.dirKey(this.slime);
+        var blockPos;
+        // if our position + our slime direction is a block's position
+        if(blocks[currKey])
+            this.doStick(currKey);
+        for (key in blocks) {
+            currKey = blocks[key].dirKey(blocks[key].slime);
+            blockPos = currKey.split(',').map(function(x){return parseInt(x)});
+            if (blockPos[0] == this.x && blockPos[1] == this.y)
+                this.doStick(key);
+        }
         for (var i = 0; i < this.blocks.length; i++)
             this.blocks[i].blockStick();
         if (this.head)
             this.head.blockStick();
+    }
+
+    this.doStick = function(key) {
+        this.head ? next = this.head : next = this; // if this block has a head that's what block[key] will stick to
+        next.blocks.push(blocks[key]); // stick them to this block
+        delete blocks[key];
+        next.blockStick();
     }
 
     this.onBoard = function(direction,excludes=0) { // checks if move would send us off the board
@@ -176,12 +181,8 @@ function Block(x,y,slime,img) {
     this.blockCollide = function(direction, excludes = 0) {
         x = direction[1];
         y = direction[0];
-        for (var i = 0; i < blocks.length; i++) // if this blocks position + move direction == any free block's position there's a collision
-            if (this.x + x == blocks[i].x && this.y + y == blocks[i].y)
-                return true;
-        for (var i = 0; i < walls.length; i++) // if this blocks position + move direction == any wall's position there's a collision
-            if (this.x + x == walls[i].x && this.y + y == walls[i].y)
-                return true;
+        if (blocks[this.dirKey(direction)] || walls[this.dirKey(direction)]) // if this blocks position + move direction == any free block's position 
+            return true;
         for (var i = 0; i < this.blocks.length; i++) // if any of this blocks children collide in the above checks
             if(this.blocks[i] != excludes && this.blocks[i].blockCollide(direction,excludes))
                 return true;
@@ -191,7 +192,7 @@ function Block(x,y,slime,img) {
         return false;
     } 
 
-    this.showBlock = function() { // makes all blocks display on the board
+    this.showBlock = function() { // makes block display on the board
         document.getElementById(this.y + ',' + this.x).innerHTML += '<img class="' + this.class.join(" ") + '" src=' + this.img + '>';
     }
 
@@ -212,7 +213,7 @@ function Block(x,y,slime,img) {
     this.destroy = function() {
         if (this.extended)
             this.retract();
-        blocks.push(this);
+        blocks[blockKey(this.x,this.y)] = this;
         for (var i = 0; i < this.blocks.length; i++)
             this.blocks[i].destroy();
         this.blocks = [];
@@ -272,10 +273,10 @@ function drawBoard() {
     }
     
     document.getElementById("board").innerHTML = result;
-    for (var i = 0; i < blocks.length; i++) 
-        document.getElementById(blocks[i].y + ',' + blocks[i].x).innerHTML += '<img class="' + blocks[i].class.join(" ") + '" src=' + blocks[i].img + '>';
-    for (var i = 0; i < walls.length; i++) 
-        document.getElementById(walls[i].y + ',' + walls[i].x).innerHTML += '<img class="block" src=' + walls[i].img + '>';
+    for (key in blocks)
+        blocks[key].showBlock();
+    for (key in walls)
+        document.getElementById(walls[key].y + ',' + walls[key].x).innerHTML += '<img class="block" src=' + walls[key].img + '>';
     for (var i = 0; i < exitTiles.length; i++) 
         document.getElementById(exitTiles[i][1] + ',' + exitTiles[i][0]).innerHTML += exitTile;
     player.showBlock();

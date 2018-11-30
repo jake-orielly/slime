@@ -55,8 +55,7 @@ function slimex2() {
         new Block(3,3,[[0,1]],"block_2"),
         new Block(5,5,[],"block")
     ];
-    walls = [
-    ];
+    walls = [];
     exitTiles = [[6,1],[5,1],[5,0],[7,0],[7,1]];
     drawBoard();
 }
