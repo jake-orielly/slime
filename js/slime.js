@@ -55,12 +55,23 @@ function Block(x,y,slime,img) {
     this.blocks = [];
     this.slime = slime;
     this.class = ["block"];
-    if (compare(slime,[-1,0]))
-        this.class.push("top");
-    else if (compare(slime,[0,-1]))
-        this.class.push("left");
-    else if (compare(slime, [1,0]))
-        this.class.push("bottom");
+    if (slime.length == 1) {
+        console.log(slime);
+        if (arrayCompare(slime,[[-1,0]]))
+            this.class.push("top");
+        else if (arrayCompare(slime,[[0,-1]]))
+            this.class.push("left");
+        else if (arrayCompare(slime,[[1,0]]))
+            this.class.push("bottom");
+    }
+    else if (slime.length == 2) {
+        if (arrayCompare(slime,[[0,1],[-1,0]]))
+            this.class.push("left");
+        else if (arrayCompare(slime,[[0,1],[1,0]]))
+            this.class.push("top");
+        else if (arrayCompare(slime,[[0,-1],[-1,0]]))
+            this.class.push("bottom");
+    }
     this.img = "art/" + img + ".png";
 
     this.dirKey = function(dir) {
@@ -86,7 +97,7 @@ function Block(x,y,slime,img) {
     this.clear = function() {
         var temp = "";
         for (var i = 0; i < exitTiles.length; i++)
-            if (compare([this.x,this.y],exitTiles[i]))
+            if (arrayCompare([this.x,this.y],exitTiles[i]))
                 temp = exitTile;
         document.getElementById(this.y + ',' + this.x).innerHTML = backgroundTile + temp;
     }
@@ -286,11 +297,17 @@ function drawBoard() {
     player.showBlock();
 }
 
-function compare (arr1,arr2) {
-    if (arr1.length != arr2.length)
+function arrayCompare (array1, array2) { //array1 == array2 doesn't work the way you would hope, so this does that (checks if elements are same & same order, works for nested arrays)
+    if (!array1 || !array2)
         return false;
-    for (var i = 0; i < arr1.length; i++)
-        if (arr1[i] != arr2[i])
+    if (array1.length != array2.length)
+        return false
+    for (var i = 0; i < array1.length; i++) //for each element of the array
+        if (Array.isArray(array1[i]) && Array.isArray(array2[i])) {
+            if (!(arrayCompare(array1[i],array2[i]))) //if its a nested array recurse
+                return false;
+        }
+        else if (!(array1[i] == array2[i])) //if they're not the same return false
             return false;
     return true;
 }
