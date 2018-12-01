@@ -12,27 +12,31 @@ var backgroundTile = '<img src="art/grass.png">';
 var exitTile = '<img class="exit" src="art/exit.png">';
 //var currLevel = complexStick;
 //var currLevel = movingParts;
-var currLevel = slimex2;
-
-currLevel();
+//var currLevel = slimex2;
+var currLevel = 0;
+var levels = [level1,level2,complexStick];
+levels[currLevel]();
+setupBlocks();
 
 function blockKey(x,y) {
     return "" + x + "," + y;
 }
 
-var temp = {};
-var key;
-for (var i = 0; i < blocks.length; i++) {
-    key = blockKey(blocks[i].x,blocks[i].y);
-    temp[key] = blocks[i];
+function setupBlocks() {
+    var temp = {};
+    var key;
+    for (var i = 0; i < blocks.length; i++) {
+        key = blockKey(blocks[i].x,blocks[i].y);
+        temp[key] = blocks[i];
+    }
+    blocks = temp;
+    temp = {};
+    for (var i = 0; i < walls.length; i++) {
+        key = blockKey(walls[i].x,walls[i].y);
+        temp[key] = walls[i];
+    }
+    walls = temp;
 }
-blocks = temp;
-temp = {};
-for (var i = 0; i < walls.length; i++) {
-    key = blockKey(walls[i].x,walls[i].y);
-    temp[key] = walls[i];
-}
-walls = temp;
 
 
 function piston(x,y,slime) {
@@ -120,15 +124,13 @@ function Block(x,y,slime,img) {
         if (this.head.onBoard(this.slime) && !this.blockCollide(this.slime)) {
             this.head.move(this.slime);
             this.extended = true;
-            if (checkExit())
-                setTimeout(function(){alert("You Win!")} , 50);
+            endLevel();
         }
         //If all blocks except this and it's children could move the opposite direction
         else if (player.onBoard(arrayNegate(this.slime),this) && !player.blockCollide(arrayNegate(this.slime),this)) {
             player.move(arrayNegate(this.slime),this.head);
             this.extended = true;
-            if (checkExit())
-                setTimeout(function(){alert("You Win!")} , 50);
+            endLevel();
         }
         this.showBlock();
     }
@@ -141,14 +143,12 @@ function Block(x,y,slime,img) {
                 this.head.move(arrayNegate(this.slime));
             this.head.showBlock();
             this.extended = false;
-            if (checkExit())
-                setTimeout(function(){alert("You Win!")} , 50);
+            endLevel();
         }
         else if (player.onBoard(this.slime,this) && !player.blockCollide(this.slime,this)) {
             player.move(this.slime,this.head);
             this.extended = false;
-            if (checkExit())
-                setTimeout(function(){alert("You Win!")} , 50);
+            endLevel();
         }
         this.showBlock();
     }
@@ -242,8 +242,7 @@ function keyResponse(event) {
         if (!player.blockCollide(direction) && player.onBoard(direction)) {
             player.move(direction);
             player.showBlock();
-            if (checkExit())
-                setTimeout(function(){alert("You Win!")} , 50);
+            endLevel();
         }
     }
     else if (event.keyCode == 82)
@@ -273,6 +272,22 @@ function checkExit() {
     }
     elimTemp(player);
     return temp.length == 0;
+}
+
+function endLevel() {
+    if (checkExit()) {
+        document.getElementById("levelTransition").style.opacity = 1;
+        setTimeout(function(){
+            if (currLevel == levels.length - 1)
+                alert("You win!");
+            else {
+                currLevel++;
+                levels[currLevel]();
+                setupBlocks();
+                document.getElementById("levelTransition").style.opacity = 0;
+            }
+        } , 1000);
+    }
 }
 
 function drawBoard() {
