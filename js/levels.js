@@ -30,6 +30,17 @@ function complexStick() {
     drawBoard();
 }
 
+function bomb1() {
+    player = new Block(0,0,[[0,1]],"player_1");
+    blocks = [
+        new Block(2,4,[[0,1]],"block_1"),
+        new Block(3,2,[[0,0]],"block"),
+        new Block(4,5,[[0,1]],"bomb_block_1")];
+    walls = [];
+    exitTiles = [[2,5],[3,5],[6,1]];
+    drawBoard();
+}
+
 function movingParts() {
     player = new Block(0,5,[[0,1]],"player_1");
     blocks = [

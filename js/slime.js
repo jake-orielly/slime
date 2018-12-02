@@ -13,8 +13,8 @@ var exitTile = '<img class="exit" src="art/exit.png">';
 //var currLevel = complexStick;
 //var currLevel = movingParts;
 //var currLevel = slimex2;
-var currLevel = 2;
-var levels = [level1,level2,complexStick];
+var currLevel = 3;
+var levels = [level1,level2,complexStick,bomb1];
 levels[currLevel]();
 setupBlocks();
 
@@ -271,6 +271,8 @@ function checkExit() {
         if (given.head)
             elimTemp(given.head);
     }
+    for (var key in blocks)
+        elimTemp(blocks[key]);
     elimTemp(player);
     return temp.length == 0;
 }
