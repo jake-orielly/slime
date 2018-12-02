@@ -13,7 +13,7 @@ var exitTile = '<img class="exit" src="art/exit.png">';
 //var currLevel = complexStick;
 //var currLevel = movingParts;
 //var currLevel = slimex2;
-var currLevel = 0;
+var currLevel = 2;
 var levels = [level1,level2,complexStick];
 levels[currLevel]();
 setupBlocks();
@@ -60,7 +60,6 @@ function Block(x,y,slime,img) {
     this.slime = slime;
     this.class = ["block"];
     if (slime.length == 1) {
-        console.log(slime);
         if (arrayCompare(slime,[[-1,0]]))
             this.class.push("top");
         else if (arrayCompare(slime,[[0,-1]]))
@@ -245,8 +244,10 @@ function keyResponse(event) {
             endLevel();
         }
     }
-    else if (event.keyCode == 82)
-        currLevel(); 
+    else if (event.keyCode == 82) {
+        levels[currLevel]();
+        setupBlocks();
+    }
     else if (event.keyCode == 32)
         player.explode();
     else if (event.keyCode == 16)
