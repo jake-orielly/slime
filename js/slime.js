@@ -152,6 +152,11 @@ function Block(x,y,slime,img) {
         document.getElementById(this.y + ',' + this.x).innerHTML = backgroundTile + temp;
     }
 
+    this.fade = function() {
+        var curr = document.getElementById(this.y + ',' + this.x).childNodes;
+        curr[curr.length-1].style.opacity = 0;
+    }
+
     this.toggle = function(){
         if (this.head) {
             if (!this.extended)
@@ -262,7 +267,7 @@ function Block(x,y,slime,img) {
             if (this.blocks[i].img == 'art/bomb_block_1.png') {
                 for (var j = 0; j < this.blocks[i].blocks.length; j++)
                     this.blocks[i].blocks[j].destroy();
-                this.blocks[i].clear();
+                this.blocks[i].fade();
                 this.blocks.splice(i,1);
             }
             else
