@@ -1,9 +1,18 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <link rel="stylesheet" href="css/slime.css">
 
 <h1>SLIME</h1>
 <div id="gameContainer">
     <table id="board" cellspacing=0></table>
     <div id="levelTransition"></div>
+    <div class="tutorial_container">
+        <div class="tutorial-content">
+            <img src="art/spaceBar.png" alt="Space Bar" class="transition-short" id="tutorial_button">
+            <img src="art/bomb_block_1.png" alt="An explosive block" class="transition-med" id="block_image">
+            <br>
+            <button class="end-tutorial" onclick="hideTutorial()">Continue &rarr;</button>
+        </div>
+    </div>
 </div>
 
 <script src="js/levels.js"></script>

@@ -15,11 +15,58 @@ var exitTile = '<img class="exit" src="art/exit.png">';
 //var currLevel = slimex2;
 var currLevel = 3;
 var levels = [level1,level2,complexStick,bomb1];
+var bombAnimationInterval;
 levels[currLevel]();
 setupBlocks();
 
 function blockKey(x,y) {
-    return "" + x + "," + y;
+    return '' + x + ',' + y;
+}
+
+function showTutorial() {
+    $('.tutorial-content').css('display','inline-block');
+    setTimeout(function() {
+        bombAnimationMaster();
+    },500);
+}
+
+function hideTutorial() {
+    setTimeout(function(){
+        clearInterval(bombAnimationInterval);
+        $('.tutorial-content').hide();
+    }, 75);
+}
+
+function bombAnimationMaster() {
+    bombAnimation();
+    bombAnimationInterval = setInterval(function() {
+        bombAnimation();
+    }, 2500);
+}
+
+function bombAnimation() {
+    bounce('tutorial_button');
+    setTimeout(function() {
+        fade('block_image');
+        setTimeout(function() {
+            $('#block_image').removeClass('transition-med');
+            $('#block_image').css('opacity','1');
+            setTimeout(function() {
+                $('#block_image').addClass('transition-med');
+            },500);
+        },1500)
+    },500);
+}
+
+function bounce(given) {
+    $('#' + given).css('transform','translateY(.25rem) scale(.98)');
+    setTimeout(function(){
+        $('#' + given).css('transform','translateY(0)');
+    },250);
+}
+
+function fade(given) {
+    $('#' + given).css('opacity','0');
 }
 
 function setupBlocks() {
@@ -40,9 +87,9 @@ function setupBlocks() {
 
 
 function piston(x,y,slime) {
-    var piston = new Block(x,y,slime,"piston_block_1");
-    piston.head = new Block(x,y,slime,"piston_head");
-    piston.head.class.push("piston_head");
+    var piston = new Block(x,y,slime,'piston_block_1');
+    piston.head = new Block(x,y,slime,'piston_head');
+    piston.head.class.push('piston_head');
     piston.extended = false;
     return piston;
 }

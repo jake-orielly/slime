@@ -47,5 +47,60 @@
     height: 100%;
     opacity: 0;
     transition: all 1s;
-    z-index: 100;
+    z-index: 20;
+}
+
+.tutorial_container {
+    position:absolute;
+    top:0;
+    left:0;
+    height: 100%;
+    width: 100%;
+    z-index:50;
+    text-align: center;
+}
+
+.tutorial-content {
+    display: none;
+    margin-top: 25%;
+    border-radius: .5rem;
+    padding: 2rem;
+    background-color: white;
+    border: .5rem solid grey;
+    text-align: center;
+}
+
+.end-tutorial {
+    margin-top: 1rem;
+    padding: 1rem;
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: 1rem;
+    color: green;
+    border: .25rem solid green;    
+}
+
+.end-tutorial:hover {
+    transform: translateY(-2px) scale(1.03);
+}
+
+.end-tutorial:active {
+    transform: translateY(5px) scale(.99);
+}
+
+button:focus {outline:0;}
+
+.transition-none {
+    transition: all 0s;
+    -webkit-transition: all 0s;
+}
+
+.transition-short {
+    transition: all .25s;
+    -webkit-transition: all .25s;
+}
+
+.transition-med {
+    transition: .5s;
+    -webkit-transition: .5s;
 }
