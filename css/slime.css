@@ -62,13 +62,37 @@
 }
 
 .tutorial-content {
-    display: none;
     margin-top: 25%;
     border-radius: .5rem;
     padding: 2rem;
     background-color: white;
     border: .5rem solid grey;
     text-align: center;
+}
+
+#bomb-tutorial {
+    display: none;
+}
+
+#piston-tutorial {
+    display: inline-block;  
+}
+
+#piston-image {
+    position: relative;
+    z-index: 200;
+}
+
+#piston-head-image {
+    transform: translateX(-100%);
+    z-index: 100;
+    margin-left: -4px;
+    padding-left: 0px;
+}
+
+#piston-tutorial-button {
+    width: 7rem;
+    margin-bottom: .5rem;
 }
 
 .end-tutorial {

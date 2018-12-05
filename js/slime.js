@@ -13,9 +13,9 @@ var exitTile = '<img class="exit" src="art/exit.png">';
 //var currLevel = complexStick;
 //var currLevel = movingParts;
 //var currLevel = slimex2;
-var currLevel = 3;
+var currLevel = 0;
 var levels = [level1,level2,complexStick,complexStick2,bomb1,bomb2];
-var bombAnimationInterval;
+var animationInterval;
 var canMove = true;
 levels[currLevel]();
 setupBlocks();
@@ -25,38 +25,59 @@ function blockKey(x,y) {
 }
 
 function showTutorial() {
-    $('.tutorial-content').css('display','inline-block');
+    $('#bomb-tutorial').css('display','inline-block');
     setTimeout(function() {
         bombAnimationMaster();
     },500);
 }
 
-function hideTutorial() {
+function hideTutorial(given) {
     setTimeout(function(){
-        clearInterval(bombAnimationInterval);
-        $('.tutorial-content').hide();
+        clearInterval(animationInterval);
+        $('#' + given + '-tutorial').hide();
         canMove = true;
     }, 75);
 }
 
 function bombAnimationMaster() {
     bombAnimation();
-    bombAnimationInterval = setInterval(function() {
+    animationInterval = setInterval(function() {
         bombAnimation();
     }, 2500);
 }
 
 function bombAnimation() {
-    bounce('tutorial_button');
+    bounce('bomb-tutorial-button');
     setTimeout(function() {
-        fade('block_image');
+        fade('bomb-image');
         setTimeout(function() {
-            $('#block_image').removeClass('transition-med');
-            $('#block_image').css('opacity','1');
+            $('#bomb-image').removeClass('transition-med');
+            $('#bomb-image').css('opacity','1');
             setTimeout(function() {
-                $('#block_image').addClass('transition-med');
+                $('#bomb-image').addClass('transition-med');
             },500);
-        },1500)
+        },1500);
+    },500);
+}
+
+function pistonAnimationMaster() {
+    pistonAnimation();
+    animationInterval = setInterval(function() {
+        pistonAnimation();
+    },2500);
+}
+
+function pistonAnimation() {
+    bounce('piston-tutorial-button');
+    setTimeout(function() {
+        $('#piston-head-image').css('transform','translateX(0)');
+        setTimeout(function() {
+            $('#piston-head-image').removeClass('transition-med');
+            $('#piston-head-image').css('transform','translateX(-100%)');
+            setTimeout(function() {
+                $('#piston-head-image').addClass('transition-med');
+            },500);
+        },1500);
     },500);
 }
 

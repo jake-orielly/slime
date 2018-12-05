@@ -6,11 +6,18 @@
     <table id="board" cellspacing=0></table>
     <div id="levelTransition"></div>
     <div class="tutorial_container">
-        <div class="tutorial-content">
-            <img src="art/spaceBar.png" alt="Space Bar" class="transition-short" id="tutorial_button">
-            <img src="art/bomb_block_1.png" alt="An explosive block" class="transition-med" id="block_image">
+        <div class="tutorial-content" id="bomb-tutorial">
+            <img src="art/spaceBar.png" alt="Space Bar" class="transition-short" id="bomb-tutorial-button">
+            <img src="art/bomb_block_1.png" alt="An explosive block" class="transition-med" id="bomb-image">
             <br>
-            <button class="end-tutorial" onclick="hideTutorial()">Continue &rarr;</button>
+            <button class="end-tutorial" onclick="hideTutorial('bomb')">Continue &rarr;</button>
+        </div>
+        <div class="tutorial-content" id="piston-tutorial">
+            <img src="art/shiftKey.png" alt="Shift Key" class="transition-short" id="piston-tutorial-button">
+            <img src="art/piston_block_1.png" alt="An extending block" class="transition-med" id="piston-image">
+            <img src="art/piston_head.png" alt="An extending block" class="transition-med" id="piston-head-image">
+            <br>
+            <button class="end-tutorial" onclick="hideTutorial('piston')">Continue &rarr;</button>
         </div>
     </div>
 </div>
