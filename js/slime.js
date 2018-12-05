@@ -13,8 +13,8 @@ var exitTile = '<img class="exit" src="art/exit.png">';
 //var currLevel = complexStick;
 //var currLevel = movingParts;
 //var currLevel = slimex2;
-var currLevel = 2;
-var levels = [level1,level2,complexStick,bomb1];
+var currLevel = 3;
+var levels = [level1,level2,complexStick,complexStick2,bomb1,bomb2];
 var bombAnimationInterval;
 var canMove = true;
 levels[currLevel]();
@@ -340,11 +340,11 @@ function endLevel() {
             if (currLevel == levels.length - 1)
                 alert("You win!");
             else {
-                if (currLevel == 2) {
+                currLevel++;
+                if (levels[currLevel] == bomb1) {
                     canMove = false;
                     showTutorial();
                 }
-                currLevel++;
                 levels[currLevel]();
                 setupBlocks();
                 document.getElementById("levelTransition").style.opacity = 0;

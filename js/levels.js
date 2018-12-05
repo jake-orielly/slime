@@ -15,7 +15,7 @@ function level2() {
 }
 
 function complexStick() {
-    player = new Block(0,0,[[0,1]],"player_1");
+    player = new Block(1,1,[[0,1]],"player_1");
     blocks = [
         new Block(3,2,[[0,1]],"block_1"),
         new Block(3,4,[[0,1]],"block_1"),
@@ -30,7 +30,31 @@ function complexStick() {
     drawBoard();
 }
 
+function complexStick2() {
+    player = new Block(1,1,[[0,1]],"player_1");
+    blocks = [
+        new Block(3,3,[[0,1],[-1,0]],"block_L"),
+        new Block(1,6,[[0,1]],"block_1"),
+        new Block(4,5,[[]],"block"),
+        new Block(6,6,[[]],"block")
+    ];
+    walls = [];
+    exitTiles = [[5,2],[4,2],[4,1],[5,1],[6,2]];
+    drawBoard();
+}
+
 function bomb1() {
+    player = new Block(0,0,[[0,1]],"player_1");
+    blocks = [
+        new Block(2,4,[[0,1]],"block_1"),
+        new Block(3,2,[[0,0]],"block"),
+        new Block(4,5,[[0,1]],"bomb_block_1")];
+    walls = [];
+    exitTiles = [[2,5],[3,5],[6,1]];
+    drawBoard();
+}
+
+function bomb2() {
     player = new Block(0,0,[[0,1]],"player_1");
     blocks = [
         new Block(2,4,[[0,1]],"block_1"),
