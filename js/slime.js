@@ -13,9 +13,10 @@ var exitTile = '<img class="exit" src="art/exit.png">';
 //var currLevel = complexStick;
 //var currLevel = movingParts;
 //var currLevel = slimex2;
-var currLevel = 3;
+var currLevel = 2;
 var levels = [level1,level2,complexStick,bomb1];
 var bombAnimationInterval;
+var canMove = true;
 levels[currLevel]();
 setupBlocks();
 
@@ -34,6 +35,7 @@ function hideTutorial() {
     setTimeout(function(){
         clearInterval(bombAnimationInterval);
         $('.tutorial-content').hide();
+        canMove = true;
     }, 75);
 }
 
@@ -287,23 +289,25 @@ function Block(x,y,slime,img) {
 }
 
 function keyResponse(event) {
-    if (event.keyCode in keyToDir) {
-        direction = keyToDir[event.keyCode];
-        player.blockStick(); // Workaround for a bug where the player can't move into a block after sticking it, TODO replace
-        if (!player.blockCollide(direction) && player.onBoard(direction)) {
-            player.move(direction);
-            player.showBlock();
-            endLevel();
+    if (canMove) {
+        if (event.keyCode in keyToDir) {
+            direction = keyToDir[event.keyCode];
+            player.blockStick(); // Workaround for a bug where the player can't move into a block after sticking it, TODO replace
+            if (!player.blockCollide(direction) && player.onBoard(direction)) {
+                player.move(direction);
+                player.showBlock();
+                endLevel();
+            }
         }
+        else if (event.keyCode == 82) {
+            levels[currLevel]();
+            setupBlocks();
+        }
+        else if (event.keyCode == 32)
+            player.explode();
+        else if (event.keyCode == 16)
+            player.toggle();
     }
-    else if (event.keyCode == 82) {
-        levels[currLevel]();
-        setupBlocks();
-    }
-    else if (event.keyCode == 32)
-        player.explode();
-    else if (event.keyCode == 16)
-        player.toggle();
 }
 
 function onBoard(x,y) {
@@ -336,6 +340,10 @@ function endLevel() {
             if (currLevel == levels.length - 1)
                 alert("You win!");
             else {
+                if (currLevel == 2) {
+                    canMove = false;
+                    showTutorial();
+                }
                 currLevel++;
                 levels[currLevel]();
                 setupBlocks();
