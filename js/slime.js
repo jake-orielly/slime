@@ -13,8 +13,8 @@ var exitTile = '<img class="exit" src="art/exit.png">';
 //var currLevel = complexStick;
 //var currLevel = movingParts;
 //var currLevel = slimex2;
-var currLevel = 0;
-var levels = [level1,level2,complexStick,complexStick2,bomb1,bomb2];
+var currLevel = 6;
+var levels = [level1,level2,complexStick,complexStick2,bomb1,bomb2,piston1];
 var animationInterval;
 var canMove = true;
 levels[currLevel]();
@@ -22,13 +22,6 @@ setupBlocks();
 
 function blockKey(x,y) {
     return '' + x + ',' + y;
-}
-
-function showTutorial() {
-    $('#bomb-tutorial').css('display','inline-block');
-    setTimeout(function() {
-        bombAnimationMaster();
-    },500);
 }
 
 function hideTutorial(given) {
@@ -40,10 +33,13 @@ function hideTutorial(given) {
 }
 
 function bombAnimationMaster() {
-    bombAnimation();
-    animationInterval = setInterval(function() {
+    $('#bomb-tutorial').css('display','inline-block');
+    setTimeout(function() {
         bombAnimation();
-    }, 2500);
+        animationInterval = setInterval(function() {
+            bombAnimation();
+        }, 2500);
+    },500);
 }
 
 function bombAnimation() {
@@ -61,10 +57,13 @@ function bombAnimation() {
 }
 
 function pistonAnimationMaster() {
-    pistonAnimation();
-    animationInterval = setInterval(function() {
+    $('#piston-tutorial').css('display','inline-block');
+    setTimeout(function() {
         pistonAnimation();
-    },2500);
+        animationInterval = setInterval(function() {
+            pistonAnimation();
+        },2500);
+    },500);
 }
 
 function pistonAnimation() {
@@ -195,14 +194,14 @@ function Block(x,y,slime,img) {
     }
 
     this.extend = function() { // Extends piston head in given direction
-        if (this.head.onBoard(this.slime) && !this.blockCollide(this.slime)) {
-            this.head.move(this.slime);
+        if (this.head.onBoard(this.slime[0]) && !this.blockCollide(this.slime[0])) {
+            this.head.move(this.slime[0]);
             this.extended = true;
             endLevel();
         }
         //If all blocks except this and it's children could move the opposite direction
-        else if (player.onBoard(arrayNegate(this.slime),this) && !player.blockCollide(arrayNegate(this.slime),this)) {
-            player.move(arrayNegate(this.slime),this.head);
+        else if (player.onBoard(arrayNegate(this.slime[0]),this) && !player.blockCollide(arrayNegate(this.slime[0]),this)) {
+            player.move(arrayNegate(this.slime[0]),this.head);
             this.extended = true;
             endLevel();
         }
@@ -210,17 +209,17 @@ function Block(x,y,slime,img) {
     }
 
     this.retract = function() { // Retracts piston head
-        var tempDir = arrayNegate(this.slime);
+        var tempDir = arrayNegate(this.slime[0]);
         if (this.head.onBoard(tempDir) && !this.blockCollide(tempDir)) {
             this.clear();
             if (this.head)
-                this.head.move(arrayNegate(this.slime));
+                this.head.move(arrayNegate(this.slime[0]));
             this.head.showBlock();
             this.extended = false;
             endLevel();
         }
-        else if (player.onBoard(this.slime,this) && !player.blockCollide(this.slime,this)) {
-            player.move(this.slime,this.head);
+        else if (player.onBoard(this.slime[0],this) && !player.blockCollide(this.slime[0],this)) {
+            player.move(this.slime[0],this.head);
             this.extended = false;
             endLevel();
         }
@@ -311,9 +310,11 @@ function Block(x,y,slime,img) {
 
 function keyResponse(event) {
     if (canMove) {
+        if (event.keyCode in keyToDir || event.keyCode == 32 || event.keyCode == 16) {
+            player.blockStick(); // Workaround for a bug where the player can't move into a block after sticking it, TODO replace
+        }
         if (event.keyCode in keyToDir) {
             direction = keyToDir[event.keyCode];
-            player.blockStick(); // Workaround for a bug where the player can't move into a block after sticking it, TODO replace
             if (!player.blockCollide(direction) && player.onBoard(direction)) {
                 player.move(direction);
                 player.showBlock();
@@ -364,7 +365,11 @@ function endLevel() {
                 currLevel++;
                 if (levels[currLevel] == bomb1) {
                     canMove = false;
-                    showTutorial();
+                    bombAnimationMaster();
+                }
+                else if (levels[currLevel] == piston1) {
+                    canMove = false;
+                    pistonAnimationMaster();
                 }
                 levels[currLevel]();
                 setupBlocks();

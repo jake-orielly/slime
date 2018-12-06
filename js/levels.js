@@ -65,6 +65,19 @@ function bomb2() {
     drawBoard();
 }
 
+function piston1() {
+    player = new Block(0,5,[[0,1]],"player_1");
+    blocks = [
+        //new Block(4,4,[0,1],"block_1"),
+        new Block(4,5,[[0,1]],"bomb_block_1"),
+        piston(5,5,[[-1,0]]),
+        piston(2,5,[[0,1]])
+    ];
+    walls = [];
+    exitTiles = [[6,1],[5,1],[5,0],[7,0],[7,1]];
+    drawBoard();
+}
+
 function movingParts() {
     player = new Block(0,5,[[0,1]],"player_1");
     blocks = [

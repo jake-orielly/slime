@@ -70,12 +70,8 @@
     text-align: center;
 }
 
-#bomb-tutorial {
+#bomb-tutorial, #piston-tutorial {
     display: none;
-}
-
-#piston-tutorial {
-    display: inline-block;  
 }
 
 #piston-image {
