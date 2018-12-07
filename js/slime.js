@@ -189,37 +189,43 @@ function Block(x,y,slime,img) {
                 this.head.blocks[i].toggle();
         }
         for (var i = 0; i < this.blocks.length; i++)
-            this.blocks[i].toggle();
+            if (this.dirKey([0,0]) == this.blocks[i].dirKey(this.blocks[i].slime[0]))
+                this.blocks[i].inverseExtend();
+            else
+                this.blocks[i].toggle();
         this.showBlock();
     }
 
     this.extend = function() { // Extends piston head in given direction
-        if (((this.x + this.slime[0][1] == player.x && this.y + this.slime[0][0] == player.y) || blocks[this.dirKey(this.slime[0])]) &&
-            this.onBoard(arrayNegate(this.slime[0])) && !this.blockCollide(arrayNegate(this.slime[0]))) { // if this is head stuck to player
-            this.move(arrayNegate(this.slime[0]),this.head);
-            for (var i = 0; i < this.head.blocks.length; i++)
-                this.head.blocks[i].move(arrayNegate(this.slime[0]));
-            this.extended = true;
-            endLevel();
-        }
-        else if (this.head.onBoard(this.slime[0]) && !this.blockCollide(this.slime[0]) && !this.head.blockCollide(this.slime[0])) {
+        if (this.head.onBoard(this.slime[0]) && !this.blockCollide(this.slime[0]) && !this.head.blockCollide(this.slime[0])) {
+            console.log(2);
             this.head.move(this.slime[0]);
             this.extended = true;
-            endLevel();
         }
         //If all blocks except this and it's children could move the opposite direction
         else if (player.onBoard(arrayNegate(this.slime[0]),this) && !player.blockCollide(arrayNegate(this.slime[0]),this)) {
+            console.log(3);
             player.move(arrayNegate(this.slime[0]),this.head);
             this.extended = true;
-            endLevel();
         }
+        endLevel();
         this.showBlock();
+    }
+
+    this.inverseExtend = function() {
+        /*((this.x + this.slime[0][1] == player.x && this.y + this.slime[0][0] == player.y) || blocks[this.dirKey(this.slime[0])]) &&
+            this.onBoard(arrayNegate(this.slime[0])) && !this.blockCollide(arrayNegate(this.slime[0]))*/
+        this.move(arrayNegate(this.slime[0]),this.head);
+        for (var i = 0; i < this.head.blocks.length; i++)
+            this.head.blocks[i].move(arrayNegate(this.slime[0]));
+        this.extended = 'inverse';
+        this.head.toggle();
     }
 
     this.retract = function() { // Retracts piston head
         var tempDir = arrayNegate(this.slime[0]);
         var pushedDir = [this.head.x + this.slime[0][1],this.head.y + this.slime[0][0]];
-        if (pushedDir[0] == player.x && pushedDir[1] == player.y && player.blocks.indexOf(this) != -1){
+        if (this.extended == 'inverse'){
             this.clear();
             if (this.head) {
                 this.move(this.slime[0],this.head);
