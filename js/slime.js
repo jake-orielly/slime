@@ -13,8 +13,8 @@ var exitTile = '<img class="exit" src="art/exit.png">';
 //var currLevel = complexStick;
 //var currLevel = movingParts;
 //var currLevel = slimex2;
-var currLevel = 7;
-var levels = [level1,level2,complexStick,complexStick2,bomb1,bomb2,piston1,piston2];
+var currLevel = 8;
+var levels = [level1,level2,complexStick,complexStick2,bomb1,bomb2,piston1,piston2,pistonTest];
 var animationInterval;
 var canMove = true;
 levels[currLevel]();
@@ -194,7 +194,15 @@ function Block(x,y,slime,img) {
     }
 
     this.extend = function() { // Extends piston head in given direction
-        if (this.head.onBoard(this.slime[0]) && !this.blockCollide(this.slime[0])) {
+        if (((this.x + this.slime[0][1] == player.x && this.y + this.slime[0][0] == player.y) || blocks[this.dirKey(this.slime[0])]) &&
+            this.onBoard(arrayNegate(this.slime[0])) && !this.blockCollide(arrayNegate(this.slime[0]))) { // if this is head stuck to player
+            this.move(arrayNegate(this.slime[0]),this.head);
+            for (var i = 0; i < this.head.blocks.length; i++)
+                this.head.blocks[i].move(arrayNegate(this.slime[0]));
+            this.extended = true;
+            endLevel();
+        }
+        else if (this.head.onBoard(this.slime[0]) && !this.blockCollide(this.slime[0]) && !this.head.blockCollide(this.slime[0])) {
             this.head.move(this.slime[0]);
             this.extended = true;
             endLevel();
@@ -210,7 +218,19 @@ function Block(x,y,slime,img) {
 
     this.retract = function() { // Retracts piston head
         var tempDir = arrayNegate(this.slime[0]);
-        if (this.head.onBoard(tempDir) && !this.blockCollide(tempDir)) {
+        var pushedDir = [this.head.x + this.slime[0][1],this.head.y + this.slime[0][0]];
+        if (pushedDir[0] == player.x && pushedDir[1] == player.y && player.blocks.indexOf(this) != -1){
+            this.clear();
+            if (this.head) {
+                this.move(this.slime[0],this.head);
+                for (var i = 0; i < this.head.blocks.length; i++)
+                    this.head.blocks[i].move((this.slime[0]));
+            }
+            this.showBlock();
+            this.extended = false;
+            endLevel();
+        }
+        else if (this.head.onBoard(tempDir) && !this.blockCollide(tempDir)) {
             this.clear();
             if (this.head)
                 this.head.move(arrayNegate(this.slime[0]));

@@ -93,6 +93,19 @@ function piston2() {
     drawBoard();
 }
 
+function pistonTest() {
+    player = new Block(1,1,[[0,1]],"player_1");
+    blocks = [
+        new Block(0,4,[[0,1]],"block_1"),
+        piston(2,4,[[-1,0]]),
+        piston(4,2,[[0,1]]),
+        piston(4,5,[[1,0]]),
+    ];
+    walls = [new Wall(5,1,"wall")];
+    exitTiles = [[6,1],[3,1]];
+    drawBoard();
+}
+
 function movingParts() {
     player = new Block(0,5,[[0,1]],"player_1");
     blocks = [
