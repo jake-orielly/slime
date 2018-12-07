@@ -1,5 +1,5 @@
 function level1() { 
-    player = new Block(0,0,[[0,0]],"player");
+    player = new Block(0,0,[[]],"player");
     blocks = [];
     walls = [];
     exitTiles = [[6,1]];
@@ -8,7 +8,7 @@ function level1() {
 
 function level2() {
     player = new Block(0,0,[[0,1]],"player_1");
-    blocks = [new Block(3,2,[[0,0]],"block")];
+    blocks = [new Block(3,2,[[]],"block")];
     walls = [];
     exitTiles = [[5,1],[6,1]];
     drawBoard();
@@ -47,7 +47,7 @@ function bomb1() {
     player = new Block(0,0,[[0,1]],"player_1");
     blocks = [
         new Block(2,4,[[0,1]],"block_1"),
-        new Block(3,2,[[0,0]],"block"),
+        new Block(3,2,[[]],"block"),
         new Block(4,5,[[0,1]],"bomb_block_1")];
     walls = [];
     exitTiles = [[2,5],[3,5],[6,1]];
@@ -57,11 +57,15 @@ function bomb1() {
 function bomb2() {
     player = new Block(0,0,[[0,1]],"player_1");
     blocks = [
-        new Block(2,4,[[0,1]],"block_1"),
-        new Block(3,2,[[0,0]],"block"),
-        new Block(4,5,[[0,1]],"bomb_block_1")];
+        new Block(2,1,[[1,0]],"block_1"),
+        new Block(3,0,[[0,-1],[1,0]],"block_L"),
+        new Block(6,1,[[]],"block"),
+        new Block(5,2,[[0,1]],"block_1"),
+        new Block(4,3,[[0,1]],"bomb_block_1"),
+        new Block(6,5,[[]],"block"),
+        new Block(6,6,[[0,-1]],"bomb_block_1")];
     walls = [];
-    exitTiles = [[2,5],[3,5],[6,1]];
+    exitTiles = [[1,6],[2,6],[4,1],[5,1],[6,1],[6,2],[6,3]];
     drawBoard();
 }
 

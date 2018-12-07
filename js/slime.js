@@ -13,7 +13,7 @@ var exitTile = '<img class="exit" src="art/exit.png">';
 //var currLevel = complexStick;
 //var currLevel = movingParts;
 //var currLevel = slimex2;
-var currLevel = 6;
+var currLevel = 5;
 var levels = [level1,level2,complexStick,complexStick2,bomb1,bomb2,piston1];
 var animationInterval;
 var canMove = true;
