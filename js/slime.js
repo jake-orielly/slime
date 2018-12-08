@@ -195,16 +195,14 @@ function Block(x,y,slime,img) {
                 this.blocks[i].toggle();
         this.showBlock();
     }
-
+    //this.dirKey([0,0]) == this.head.blocks[0].dirKey(this.blocks[0].slime[0])) 
     this.extend = function() { // Extends piston head in given direction
         if (this.head.onBoard(this.slime[0]) && !this.blockCollide(this.slime[0]) && !this.head.blockCollide(this.slime[0])) {
-            console.log(2);
             this.head.move(this.slime[0]);
             this.extended = true;
         }
         //If all blocks except this and it's children could move the opposite direction
         else if (player.onBoard(arrayNegate(this.slime[0]),this) && !player.blockCollide(arrayNegate(this.slime[0]),this)) {
-            console.log(3);
             player.move(arrayNegate(this.slime[0]),this.head);
             this.extended = true;
         }
@@ -275,7 +273,7 @@ function Block(x,y,slime,img) {
     }
 
     this.doStick = function(key) {
-        this.head ? next = this.head : next = this; // if this block has a head that's what block[key] will stick to
+        this.head && this.head.dirKey(this.slime[0]) == key ? next = this.head : next = this; // if this block has a head that's what block[key] will stick to
         next.blocks.push(blocks[key]); // stick them to this block
         delete blocks[key];
         next.blockStick();
