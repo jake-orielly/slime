@@ -7,13 +7,13 @@ var walls;
 var exitTiles;
 var player;
 var offsets = [[0,1],[1,0],[0,-1],[-1,0]];
-var keyToDir = {65:[0,-1],83:[1,0],68:[0,1],87:[-1,0]}; // Maps a keypress code to a direction on the board
+var keyToDir = {65:[0,-1],37:[0,-1],83:[1,0],40:[1,0],68:[0,1],39:[0,1],87:[-1,0],38:[-1,0]}; // Maps a keypress code to a direction on the board
 var backgroundTile = '<img src="art/grass.png">';
 var exitTile = '<img class="exit" src="art/exit.png">';
 //var currLevel = complexStick;
 //var currLevel = movingParts;
 //var currLevel = slimex2;
-var currLevel = 8;
+var currLevel = 5;
 var levels = [level1,level2,complexStick,complexStick2,bomb1,bomb2,piston1,piston2,pistonTest];
 var animationInterval;
 var canMove = true;
@@ -123,6 +123,7 @@ function Wall(x,y,img) {
 }
 
 function keyResponse(event) {
+    console.log(event.keyCode);
     if (canMove) {
         if (event.keyCode in keyToDir || event.keyCode == 32 || event.keyCode == 16) {
             player.blockStick(); // Workaround for a bug where the player can't move into a block after sticking it, TODO replace
