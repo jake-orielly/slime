@@ -130,6 +130,11 @@ function Block(x,y,slime,img) {
             this.extended = false;
             endLevel();
         }
+        if (this.head){
+            this.clear();
+            this.showBlock();
+            this.head.showBlock();
+        }
     }
 
     this.blockStick = function() { // Sticks blocks to other blocks
