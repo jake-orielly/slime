@@ -13,7 +13,7 @@ var exitTile = '<img class="exit" src="art/exit.png">';
 //var currLevel = complexStick;
 //var currLevel = movingParts;
 //var currLevel = slimex2;
-var currLevel = 5;
+var currLevel = 6;
 var levels = [level1,level2,complexStick,complexStick2,bomb1,bomb2,piston1,piston2,pistonTest];
 var animationInterval;
 var canMove = true;
@@ -62,7 +62,7 @@ function pistonAnimationMaster() {
         pistonAnimation();
         animationInterval = setInterval(function() {
             pistonAnimation();
-        },2500);
+        },4000);
     },500);
 }
 
@@ -71,10 +71,9 @@ function pistonAnimation() {
     setTimeout(function() {
         $('#piston-head-image').css('transform','translateX(0)');
         setTimeout(function() {
-            $('#piston-head-image').removeClass('transition-med');
-            $('#piston-head-image').css('transform','translateX(-100%)');
+            bounce('piston-tutorial-button');
             setTimeout(function() {
-                $('#piston-head-image').addClass('transition-med');
+                $('#piston-head-image').css('transform','translateX(-100%)');
             },500);
         },1500);
     },500);
@@ -207,8 +206,11 @@ function drawBoard() {
     }
     
     document.getElementById("board").innerHTML = result;
-    for (key in blocks)
+    for (key in blocks) {
         blocks[key].showBlock();
+        if (blocks[key].head)
+            blocks[key].head.showBlock();
+    }
     for (key in walls)
         document.getElementById(walls[key].y + ',' + walls[key].x).innerHTML += '<img class="block" src=' + walls[key].img + '>';
     for (var i = 0; i < exitTiles.length; i++) 

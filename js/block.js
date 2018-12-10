@@ -70,6 +70,8 @@ function Block(x,y,slime,img) {
             else
                 this.blocks[i].toggle();
         this.showBlock();
+        if (this.head)
+            this.head.showBlock();
     }
     //this.dirKey([0,0]) == this.head.blocks[0].dirKey(this.blocks[0].slime[0])) 
     this.extend = function() { // Extends piston head in given direction
@@ -83,7 +85,7 @@ function Block(x,y,slime,img) {
             this.extended = true;
         }
         endLevel();
-        this.showBlock();
+        this.head.class.push ('piston_head' + '_' + this.class[1] + '_extended');
     }
 
     this.inverseExtend = function() {
@@ -93,6 +95,7 @@ function Block(x,y,slime,img) {
         for (var i = 0; i < this.head.blocks.length; i++)
             this.head.blocks[i].move(arrayNegate(this.slime[0]));
         this.extended = 'inverse';
+        this.head.class.push ('piston_head' + '_' + this.class[1] + '_extended');
         this.head.toggle();
     }
 
@@ -105,25 +108,28 @@ function Block(x,y,slime,img) {
                 this.move(this.slime[0],this.head);
                 for (var i = 0; i < this.head.blocks.length; i++)
                     this.head.blocks[i].move((this.slime[0]));
+                this.head.class = this.head.class.slice(0, this.head.class.length-1);
             }
-            this.showBlock();
             this.extended = false;
             endLevel();
         }
         else if (this.head.onBoard(tempDir) && !this.blockCollide(tempDir)) {
             this.clear();
-            if (this.head)
+            if (this.head) {
                 this.head.move(arrayNegate(this.slime[0]));
-            this.head.showBlock();
+                this.head.class = this.head.class.slice(0, this.head.class.length-1);
+            }
             this.extended = false;
             endLevel();
         }
         else if (player.onBoard(this.slime[0],this) && !player.blockCollide(this.slime[0],this)) {
+            this.clear();
             player.move(this.slime[0],this.head);
+            if (this.head)
+                this.head.class = this.head.class.slice(0, this.head.class.length-1);
             this.extended = false;
             endLevel();
         }
-        this.showBlock();
     }
 
     this.blockStick = function() { // Sticks blocks to other blocks

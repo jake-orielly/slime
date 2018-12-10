@@ -32,6 +32,22 @@
 
 .piston_head {
     z-index: 5;
+
+}
+.piston_head_extended {
+    transform: scaleX(1.1) translateX(-3px);
+}
+
+.piston_head_top_extended {
+    transform: scaleY(1.1) translateY(3px) rotate(270deg);
+}
+
+.piston_head_left_extended {
+    transform: scaleX(1.1) translateX(-3px) rotate(180deg);
+}
+
+.piston_head_bottom_extended {
+    transform: scaleY(1.1) translateY(-3px) rotate(90deg);
 }
 
 #gameContainer {
