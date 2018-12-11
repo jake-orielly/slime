@@ -43,7 +43,7 @@
 }
 
 .piston_head_left_extended {
-    transform: scaleX(1.1) translateX(-3px) rotate(180deg);
+    transform: scaleX(1.1) translateX(3px) rotate(180deg);
 }
 
 .piston_head_bottom_extended {

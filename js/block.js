@@ -91,7 +91,8 @@ function Block(x,y,slime,img) {
         for (var i = 0; i < this.head.blocks.length; i++)
             this.head.blocks[i].move(arrayNegate(this.slime[0]));
         this.extended = 'inverse';
-        this.head.class.push ('piston_head' + '_' + this.class[1] + '_extended');
+        this.class[1] ? tempClass = this.class[1] : tempClass = "";
+        this.head.class.push ('piston_head' + '_' + tempClass + '_extended');
         this.head.toggle();
     }
 
