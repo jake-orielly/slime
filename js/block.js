@@ -52,18 +52,21 @@ function Block(x,y,slime,img) {
         curr[curr.length-1].style.opacity = 0;
     }
 
-    this.toggle = function(){
-        if (this.head) {
+    this.toggle = function(skip = false){
+        if (this.head && !skip) {
             if (!this.extended)
                 this.extend();
             else
                 this.retract();
-            for (var i = 0; i < this.head.blocks.length; i++)
-                this.head.blocks[i].toggle();
+            this.head.toggle();
         }
         for (var i = 0; i < this.blocks.length; i++)
-            if (this.dirKey([0,0]) == this.blocks[i].dirKey(this.blocks[i].slime[0]))
+            if (this.blocks[i].head && 
+                (this.blocks[i].dirKey([0,0]) == player.dirKey(arrayNegate(this.blocks[i].slime[0])) ||
+                this.blocks[i].dirKey([0,0]) == this.dirKey(arrayNegate(this.blocks[i].slime[0])))) {
                 this.blocks[i].inverseExtend();
+                this.blocks[i].toggle(true);
+            }
             else
                 this.blocks[i].toggle();
     }
@@ -85,8 +88,6 @@ function Block(x,y,slime,img) {
     }
 
     this.inverseExtend = function() {
-        /*((this.x + this.slime[0][1] == player.x && this.y + this.slime[0][0] == player.y) || blocks[this.dirKey(this.slime[0])]) &&
-            this.onBoard(arrayNegate(this.slime[0])) && !this.blockCollide(arrayNegate(this.slime[0]))*/
         this.move(arrayNegate(this.slime[0]),this.head);
         for (var i = 0; i < this.head.blocks.length; i++)
             this.head.blocks[i].move(arrayNegate(this.slime[0]));

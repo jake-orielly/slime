@@ -1,3 +1,2 @@
 pistons chains can thwart collision detection
-pistons attached head first don’t extend (unless they have a block between them)
 Coordinate system mixed up (exit tiles vs blocks)
