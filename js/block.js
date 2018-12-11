@@ -60,15 +60,20 @@ function Block(x,y,slime,img) {
                 this.retract();
             this.head.toggle();
         }
-        for (var i = 0; i < this.blocks.length; i++)
-            if (this.blocks[i].head && 
-                (this.blocks[i].dirKey([0,0]) == player.dirKey(arrayNegate(this.blocks[i].slime[0])) ||
-                this.blocks[i].dirKey([0,0]) == this.dirKey(arrayNegate(this.blocks[i].slime[0])))) {
-                this.blocks[i].inverseExtend();
-                this.blocks[i].toggle(true);
+        var curr;
+        for (var i = 0; i < this.blocks.length; i++) {
+            curr = this.blocks[i];
+            currDir = arrayNegate(curr.slime[0]);
+            if (curr.head &&
+                (curr.dirKey([0,0]) == player.dirKey(currDir) ||
+                curr.dirKey([0,0]) == this.dirKey(currDir))) {
+                if (curr.onBoard(currDir) && !curr.blockCollide(currDir))
+                    curr.inverseExtend();
+                curr.toggle(true);
             }
             else
-                this.blocks[i].toggle();
+                curr.toggle();
+        }
     }
     //this.dirKey([0,0]) == this.head.blocks[0].dirKey(this.blocks[0].slime[0])) 
     this.extend = function() { // Extends piston head in given direction
@@ -102,13 +107,13 @@ function Block(x,y,slime,img) {
         var pushedDir = [this.head.x + this.slime[0][1],this.head.y + this.slime[0][0]];
         var success = false;
         if (this.extended == 'inverse'){
-            if (this.head) {
+            if (this.head && this.onBoard(this.slime[0]) && !this.blockCollide(this.slime[0])) {
                 this.move(this.slime[0],this.head);
                 for (var i = 0; i < this.head.blocks.length; i++)
                     this.head.blocks[i].move((this.slime[0]));
                 this.head.class = this.head.class.slice(0, this.head.class.length-1);
+                success = true;
             }
-            success = true;
         }
         else if (this.head.onBoard(tempDir) && !this.blockCollide(tempDir)) {
             this.head.move(arrayNegate(this.slime[0]));
