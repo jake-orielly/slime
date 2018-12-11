@@ -37,9 +37,6 @@ function Block(x,y,slime,img) {
         if (this.head && this.head != excludes) {
             this.head.move(given,excludes);
         }
-        else if (this.head)
-            this.head.showBlock();
-        this.showBlock();
     }
 
     this.clear = function() {
@@ -69,12 +66,10 @@ function Block(x,y,slime,img) {
                 this.blocks[i].inverseExtend();
             else
                 this.blocks[i].toggle();
-        this.showBlock();
-        if (this.head)
-            this.head.showBlock();
     }
     //this.dirKey([0,0]) == this.head.blocks[0].dirKey(this.blocks[0].slime[0])) 
     this.extend = function() { // Extends piston head in given direction
+        var tempClass;
         if (this.head.onBoard(this.slime[0]) && !this.blockCollide(this.slime[0]) && !this.head.blockCollide(this.slime[0])) {
             this.head.move(this.slime[0]);
             this.extended = true;
@@ -85,7 +80,8 @@ function Block(x,y,slime,img) {
             this.extended = true;
         }
         endLevel();
-        this.head.class.push ('piston_head' + '_' + this.class[1] + '_extended');
+        this.class[1] ? tempClass = this.class[1] : tempClass = "";
+        this.head.class.push ('piston_head' + '_' + tempClass + '_extended');
     }
 
     this.inverseExtend = function() {
@@ -102,38 +98,33 @@ function Block(x,y,slime,img) {
     this.retract = function() { // Retracts piston head
         var tempDir = arrayNegate(this.slime[0]);
         var pushedDir = [this.head.x + this.slime[0][1],this.head.y + this.slime[0][0]];
+        var success = false;
         if (this.extended == 'inverse'){
-            this.clear();
             if (this.head) {
                 this.move(this.slime[0],this.head);
                 for (var i = 0; i < this.head.blocks.length; i++)
                     this.head.blocks[i].move((this.slime[0]));
                 this.head.class = this.head.class.slice(0, this.head.class.length-1);
             }
-            this.extended = false;
-            endLevel();
+            success = true;
         }
         else if (this.head.onBoard(tempDir) && !this.blockCollide(tempDir)) {
-            this.clear();
-            if (this.head) {
-                this.head.move(arrayNegate(this.slime[0]));
-                this.head.class = this.head.class.slice(0, this.head.class.length-1);
-            }
-            this.extended = false;
-            endLevel();
+            this.head.move(arrayNegate(this.slime[0]));
+            this.head.class = this.head.class.slice(0, this.head.class.length-1);
+            success = true;
         }
         else if (player.onBoard(this.slime[0],this) && !player.blockCollide(this.slime[0],this)) {
-            this.clear();
             player.move(this.slime[0],this.head);
             if (this.head)
                 this.head.class = this.head.class.slice(0, this.head.class.length-1);
+            success = true;
+        }
+        if (success) {
             this.extended = false;
             endLevel();
-        }
-        if (this.head){
-            this.clear();
+            if (this.head)
+                this.head.clear();
             this.showBlock();
-            this.head.showBlock();
         }
     }
 
@@ -193,6 +184,10 @@ function Block(x,y,slime,img) {
 
     this.showBlock = function() { // makes block display on the board
         document.getElementById(this.y + ',' + this.x).innerHTML += '<img class="' + this.class.join(" ") + '" src=' + this.img + '>';
+        if (this.head)
+            this.head.showBlock();
+        for (var i = 0; i < this.blocks.length; i++)
+            this.blocks[i].showBlock();
     }
 
     this.explode = function() {

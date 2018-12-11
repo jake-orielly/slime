@@ -13,7 +13,7 @@ var exitTile = '<img class="exit" src="art/exit.png">';
 //var currLevel = complexStick;
 //var currLevel = movingParts;
 //var currLevel = slimex2;
-var currLevel = 6;
+var currLevel = 8;
 var levels = [level1,level2,complexStick,complexStick2,bomb1,bomb2,piston1,piston2,pistonTest];
 var animationInterval;
 var canMove = true;
@@ -122,7 +122,6 @@ function Wall(x,y,img) {
 }
 
 function keyResponse(event) {
-    console.log(event.keyCode);
     if (canMove) {
         if (event.keyCode in keyToDir || event.keyCode == 32 || event.keyCode == 16) {
             player.blockStick(); // Workaround for a bug where the player can't move into a block after sticking it, TODO replace
@@ -131,7 +130,6 @@ function keyResponse(event) {
             direction = keyToDir[event.keyCode];
             if (!player.blockCollide(direction) && player.onBoard(direction)) {
                 player.move(direction);
-                player.showBlock();
                 endLevel();
             }
         }
@@ -143,6 +141,7 @@ function keyResponse(event) {
             player.explode();
         else if (event.keyCode == 16)
             player.toggle();
+        player.showBlock();
     }
 }
 

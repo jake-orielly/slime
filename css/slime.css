@@ -34,7 +34,7 @@
     z-index: 5;
 
 }
-.piston_head_extended {
+.piston_head__extended {
     transform: scaleX(1.1) translateX(-3px);
 }
 
