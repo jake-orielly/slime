@@ -80,18 +80,21 @@ function Block(x,y,slime,img) {
     //this.dirKey([0,0]) == this.head.blocks[0].dirKey(this.blocks[0].slime[0])) 
     this.extend = function() { // Extends piston head in given direction
         var tempClass;
+        var succeeded = false;
         if (this.head.onBoard(this.slime[0]) && !this.blockCollide(this.slime[0]) && !this.head.blockCollide(this.slime[0])) {
             this.head.move(this.slime[0]);
             this.extended = true;
         }
-        //If all blocks except this and it's children could move the opposite direction
-        else if (player.onBoard(arrayNegate(this.slime[0]),this) && !player.blockCollide(arrayNegate(this.slime[0]),this)) {
+        //If this could move in the opposite direction
+        else if (player.onBoard(arrayNegate(this.slime[0])) && !player.blockCollide(arrayNegate(this.slime[0]))) {
             player.move(arrayNegate(this.slime[0]),this.head);
             this.extended = true;
         }
-        endLevel();
-        this.class[1] ? tempClass = this.class[1] : tempClass = "";
-        this.head.class.push ('piston_head' + '_' + tempClass + '_extended');
+        if (this.extended) {
+            endLevel();
+            this.class[1] ? tempClass = this.class[1] : tempClass = "";
+            this.head.class.push ('piston_head' + '_' + tempClass + '_extended');
+        }
     }
 
     this.inverseExtend = function() {

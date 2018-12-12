@@ -24,7 +24,7 @@ function complexStick() {
         new Block(5,5,[[-1,0]],"block_1")
     ];
     walls = [
-        new Wall(6,0,"wall")
+        new Wall(6,0)
     ];
     exitTiles = [[6,1],[5,1],[5,0],[7,0],[7,1]];
     drawBoard();
@@ -88,7 +88,7 @@ function piston2() {
         piston(4,2,[[0,1]]),
         piston(4,5,[[1,0]]),
     ];
-    walls = [new Wall(5,1,"wall")];
+    walls = [new Wall(5,1)];
     exitTiles = [[6,1],[3,1]];
     drawBoard();
 }
@@ -111,14 +111,14 @@ function movingParts() {
     player = new Block(0,5,[[0,1]],"player_1");
     blocks = [
         //new Block(4,4,[0,1],"block_1"),
-        new Block(4,5,[[0,1]],"bomb_block_1"),
+        //new Block(4,5,[[0,1]],"bomb_block_1"),
         piston(5,5,[[-1,0]]),
         piston(2,5,[[0,1]])
     ];
     walls = [
-        new Wall(6,0,"wall"),
-        new Wall(7,0,"wall"),
-        new Wall(7,2,"wall")
+        new Wall(6,0),
+        new Wall(7,0),
+        new Wall(7,2)
     ];
     exitTiles = [[6,1],[5,1],[5,0],[7,0],[7,1]];
     drawBoard();
