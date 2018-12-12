@@ -155,8 +155,9 @@ function Block(x,y,slime,img) {
                 this.doStick(currKey);
         }
         for (key in blocks) {
-            for (var i = 0; i < blocks[key].slime.length; i++) {
-                currKey = blocks[key].dirKey(blocks[key].slime[i]);
+            var curr = blocks[key];
+            for (var i = 0; i < curr.slime.length; i++) {
+                currKey = curr.dirKey(curr.slime[i]);
                 blockPos = currKey.split(',').map(function(x){return parseInt(x)});
                 if (blockPos[0] == this.x && blockPos[1] == this.y)
                     this.doStick(key);
