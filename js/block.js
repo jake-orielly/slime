@@ -69,6 +69,8 @@ function Block(x,y,slime,img) {
                 curr.dirKey([0,0]) == this.dirKey(currDir))) {
                 if (curr.onBoard(currDir) && !curr.blockCollide(currDir))
                     curr.inverseExtend();
+                else if (player.onBoard(curr.slime[0]) && !player.blockCollide(curr.slime[0]))
+                    curr.inverseReverse();
                 curr.toggle(true);
             }
             else
@@ -100,6 +102,15 @@ function Block(x,y,slime,img) {
         this.class[1] ? tempClass = this.class[1] : tempClass = "";
         this.head.class.push ('piston_head' + '_' + tempClass + '_extended');
         this.head.toggle();
+    }
+
+    this.inverseReverse = function() {
+        player.move(this.slime[0],this);
+        this.head.move(this.slime[0]);
+        this.class[1] ? tempClass = this.class[1] : tempClass = "";
+        this.head.class.push ('piston_head' + '_' + tempClass + '_extended');
+        this.extended = 'inverse';
+        player.showBlock();
     }
 
     this.retract = function() { // Retracts piston head

@@ -1,2 +1,2 @@
 pistons chains can thwart collision detection
-Coordinate system mixed up (exit tiles vs blocks)
+bug when trying to stick the last blocks in the level

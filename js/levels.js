@@ -99,8 +99,8 @@ function pistonTest() {
         //new Block(0,4,[[0,1]],"block_1"),
         piston(2,4,[[-1,0]]),
         piston(4,2,[[0,1]]),
-        //piston(4,5,[[1,0]]),
-        //piston(5,5,[[0,-1]])
+        piston(4,5,[[1,0]]),
+        piston(5,5,[[0,-1]])
     ];
     walls = [];
     exitTiles = [[6,1],[3,1]];
