@@ -14,6 +14,32 @@ function level2() {
     drawBoard();
 }
 
+function level3() {
+    player = new Block(1,1,[[0,1]],"player_1");
+    blocks = [
+        new Block(3,3,[[-1,0]],"block_1"),
+        new Block(5,4,[[]],"block"),
+        new Block(6,6,[[0,1]],"block_1"),
+        new Block(3,5,[[0,1]],"block_1"),
+    ];
+    walls = [];
+    exitTiles = [[3,2],[4,2],[5,2],[6,2],[6,1]];
+    drawBoard();
+}
+
+function level4() {
+    player = new Block(1,1,[[0,1]],"player_1");
+    blocks = [
+        new Block(2,3,[[-1,0]],"block_1"),
+        new Block(3,6,[[1,0]],"block_1"),
+        new Block(6,3,[[0,1]],"block_1"),
+        new Block(5,5,[[]],"block")
+    ];
+    walls = [];
+    exitTiles = [[4,2],[5,2],[6,2],[5,3],[5,1]];
+    drawBoard();
+}
+
 function complexStick() {
     player = new Block(1,1,[[0,1]],"player_1");
     blocks = [
