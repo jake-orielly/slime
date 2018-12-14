@@ -102,7 +102,7 @@ function piston1() {
         piston(3,3,[[-1,0]]),
     ];
     walls = [];
-    exitTiles = [[6,1],[6,2],[6,3],[5,3]];
+    exitTiles = [[6,1],[6,3],[5,3]];
     drawBoard();
 }
 
@@ -119,17 +119,17 @@ function piston2() {
     drawBoard();
 }
 
-function pistonTest() {
-    player = new Block(6,3,[[0,1]],"player_1");
+function piston3() {
+    player = new Block(1,1,[[0,1]],"player_1");
     blocks = [
-        //new Block(0,4,[[0,1]],"block_1"),
-        piston(2,4,[[-1,0]]),
-        piston(4,2,[[0,1]]),
-        piston(4,5,[[1,0]]),
-        piston(5,5,[[0,-1]])
+        piston(1,3,[[-1,0]]),
+        piston(4,2,[[1,0]]),
+        piston(1,6,[[0,-1]]),
+        piston(3,4,[[0,-1]]),
+        piston(5,4,[[0,1]])
     ];
     walls = [];
-    exitTiles = [[6,1],[3,1]];
+    exitTiles = [[4,1],[6,1],[4,3],[6,3],[4,5],[6,5]];
     drawBoard();
 }
 
@@ -146,19 +146,6 @@ function movingParts() {
         new Wall(7,0),
         new Wall(7,2)
     ];
-    exitTiles = [[6,1],[5,1],[5,0],[7,0],[7,1]];
-    drawBoard();
-}
-
-function slimex2() {
-    player = new Block(1,5,[[0,1],[-1,0]],"player_L");
-    blocks = [
-        new Block(3,0,[[]],"block"),
-        new Block(5,3,[[]],"block"),
-        new Block(3,3,[[0,1],[-1,0]],"block_L"),
-        new Block(5,5,[[]],"block")
-    ];
-    walls = [];
     exitTiles = [[6,1],[5,1],[5,0],[7,0],[7,1]];
     drawBoard();
 }
