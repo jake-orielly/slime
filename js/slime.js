@@ -10,8 +10,8 @@ var offsets = [[0,1],[1,0],[0,-1],[-1,0]];
 var keyToDir = {65:[0,-1],37:[0,-1],83:[1,0],40:[1,0],68:[0,1],39:[0,1],87:[-1,0],38:[-1,0]}; // Maps a keypress code to a direction on the board
 var backgroundTile = '<img src="art/grass.png">';
 var exitTile = '<img class="exit" src="art/exit.png">';
-var currLevel = 2;
-var levels = [level1,level2,level3,level4,complexStick,complexStick2,bomb1,bomb2,piston1,piston2,movingParts];
+var currLevel = 11;
+var levels = [level1,level2,level3,level4,complexStick,complexStick2,bomb1,bomb2,piston1,piston2,movingParts,pistonTest];
 var animationInterval;
 var canMove = true;
 levels[currLevel]();
@@ -103,15 +103,6 @@ function setupBlocks() {
     walls = temp;
 }
 
-
-function piston(x,y,slime) {
-    var piston = new Block(x,y,slime,'piston_block_1');
-    piston.head = new Block(x,y,slime,'piston_head');
-    piston.head.class.push('piston_head');
-    piston.extended = false;
-    return piston;
-}
-
 function Wall(x,y) {
     this.x = x;
     this.y = y;
@@ -127,7 +118,6 @@ function keyResponse(event) {
             direction = keyToDir[event.keyCode];
             if (!player.blockCollide(direction) && player.onBoard(direction)) {
                 player.move(direction);
-                endLevel();
             }
         }
         else if (event.keyCode == 82) {
@@ -139,10 +129,11 @@ function keyResponse(event) {
         else if (event.keyCode == 16)
             player.toggle();
         player.showBlock();
+        endLevel(); // Checks if player has beaten the level
     }
 }
 
-function onBoard(x,y) {
+function coordOnBoard(x,y) {
     if (x >= 0 && x < boardHeight && y >= 0 && y < boardWidth)
         return true;
     return false;
