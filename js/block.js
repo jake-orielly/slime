@@ -52,7 +52,7 @@ function Block(x,y,slime,img) {
         curr[curr.length-1].style.opacity = 0;
     }
 
-    this.toggle = function(onlyChildren = false){ // Extends or retracts piston as appropriate, recurses to children, if onlyChildren, doesn't affect this block
+    this.toggle = function(onlyChildren = false){ // Extends or retracts piston as appropriate, recurses to children, if onlyChildren, doesn't affect this block  
         if (this.head && !onlyChildren) {
             if (!this.extended)
                 this.extend();
@@ -195,6 +195,8 @@ function Block(x,y,slime,img) {
     } 
 
     this.showBlock = function() { // Makes block and its children display on the board
+        if (this.class.indexOf('piston_head') == -1) // If this isn't a piston head (that would clear this piston as well)
+            this.clear();
         document.getElementById(this.y + ',' + this.x).innerHTML += '<img class="' + this.class.join(" ") + '" src=' + this.img + '>';
         if (this.head)
             this.head.showBlock();
