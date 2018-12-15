@@ -146,21 +146,22 @@ function pistonDeSync() {
     drawBoard();
 }
 
-function movingParts() {
+function movingParts() { // I predict players will find this one very hard
     player = new Block(1,1,[[-1,0]],"player_1");
     blocks = [
-        new Block(6,3,[[0,-1]],"bomb_block_1"),
+        new Block(4,3,[[0,-1]],"bomb_block_1"),
+        new Block(6,3,[[0,-1]],"block_1"),
         new Block(7,4,[[0,-1],[-1,0]],"block_L"),
-        new Block(7,5,[[]],"block"),
         new Block(0,0,[[]],"block"),
-        new Block(3,6,[[0,-1]],"block_1"),
-        piston(5,5,[[-1,0]]),
-        piston(6,6,[[0,-1]])
+        new Block(5,7,[[0,-1]],"block_1"),
+        piston(1,5,[[0,-1]]),
+        piston(6,5,[[-1,0]]),
+        piston(7,6,[[0,-1]])
     ];
     walls = [
         new Wall(4,0), new Wall(5,0), new Wall(6,0), new Wall(7,0),
         new Wall(4,2), new Wall(5,2), new Wall(6,2), new Wall(7,2)
     ];
-    exitTiles = [[7,1],[7,7]];
+    exitTiles = [[1,3],[7,1],[6,7]];
     drawBoard();
 }
