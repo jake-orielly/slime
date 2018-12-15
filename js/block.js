@@ -219,8 +219,10 @@ function Block(x,y,slime,img) {
     }
 
     this.remove = function() { // Add this and it's children to list of free blocks
-        if (this.extended)
+        if (this.extended) {
+            this.extended = true; // In case this.extended == reverse before
             this.retract();
+        }
         blocks[blockKey(this.x,this.y)] = this; 
         for (var i = 0; i < this.blocks.length; i++)
             this.blocks[i].remove();
