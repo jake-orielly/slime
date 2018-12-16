@@ -10,7 +10,7 @@ var offsets = [[0,1],[1,0],[0,-1],[-1,0]];
 var keyToDir = {65:[0,-1],37:[0,-1],83:[1,0],40:[1,0],68:[0,1],39:[0,1],87:[-1,0],38:[-1,0]}; // Maps a keypress code to a direction on the board
 var backgroundTile = '<img src="art/grass.png">';
 var exitTile = '<img class="exit" src="art/exit.png">';
-var currLevel = 12;
+var currLevel = 0;
 var levels = [level1,level2,level3,level4,complexStick,complexStick2,bomb1,bomb2,piston1,piston2,piston3,pistonDeSync,movingParts];
 var animationInterval;
 var canMove = true;
@@ -27,6 +27,29 @@ function hideTutorial(given) {
         $('#' + given + '-tutorial').hide();
         canMove = true;
     }, 75);
+}
+
+function movementAnimationMaster() {
+    $('#move-tutorial').css('display','inline-block');
+    setTimeout(function() {
+        moveAnimation();
+        animationInterval = setInterval(function() {
+            moveAnimation();
+        }, 4000);
+    },1000);
+}
+
+function moveAnimation() {
+    bounce('up-key','.');
+    setTimeout(function() {
+        bounce('right-key','.');
+        setTimeout(function() {
+            bounce('down-key','.');
+            setTimeout(function() {
+                bounce('left-key','.');
+            },1000);
+        },1000);
+    },1000);
 }
 
 function bombAnimationMaster() {
@@ -76,10 +99,10 @@ function pistonAnimation() {
     },500);
 }
 
-function bounce(given) {
-    $('#' + given).css('transform','translateY(.25rem) scale(.98)');
+function bounce(given, identifier='#') {
+    $(identifier + given).css('transform','translateY(.25rem) scale(.98)');
     setTimeout(function(){
-        $('#' + given).css('transform','translateY(0)');
+        $(identifier + given).css('transform','translateY(0)');
     },250);
 }
 

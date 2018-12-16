@@ -6,14 +6,33 @@
     <table id="board" cellspacing=0></table>
     <div id="levelTransition"></div>
     <div class="tutorial_container">
+            <div class="tutorial-content" id="move-tutorial">
+                <div>
+                    <div class="keyDiv" style="margin-right: 2em;">
+                        <img src="art/keys/w_key.png" alt="Space Bar" class="transition-short key up-key">
+                        <br>
+                        <img src="art/keys/a_key.png" alt="Space Bar" class="transition-short key left-key">
+                        <img src="art/keys/s_key.png" alt="Space Bar" class="transition-short key down-key">
+                        <img src="art/keys/d_key.png" alt="Space Bar" class="transition-short key right-key">
+                    </div>
+                    <div class="keyDiv" style="margin-left: 2em;">
+                            <img src="art/keys/up_key.png" alt="Space Bar" class="transition-short key up-key">
+                            <br>
+                            <img src="art/keys/left_key.png" alt="Space Bar" class="transition-short key left-key">
+                            <img src="art/keys/down_key.png" alt="Space Bar" class="transition-short key down-key">
+                            <img src="art/keys/right_key.png" alt="Space Bar" class="transition-short key right-key">
+                    </div>
+                </div>
+                <button class="end-tutorial" onclick="hideTutorial('bomb')">Continue &rarr;</button>
+            </div>
         <div class="tutorial-content" id="bomb-tutorial">
-            <img src="art/spaceBar.png" alt="Space Bar" class="transition-short" id="bomb-tutorial-button">
+            <img src="art/keys/spaceBar.png" alt="Space Bar" class="transition-short" id="bomb-tutorial-button">
             <img src="art/bomb_block_1.png" alt="An explosive block" class="transition-med" id="bomb-image">
             <br>
             <button class="end-tutorial" onclick="hideTutorial('bomb')">Continue &rarr;</button>
         </div>
         <div class="tutorial-content" id="piston-tutorial">
-            <img src="art/shiftKey.png" alt="Shift Key" class="transition-short" id="piston-tutorial-button">
+            <img src="art/keys/shiftKey.png" alt="Shift Key" class="transition-short" id="piston-tutorial-button">
             <img src="art/piston_block_1.png" alt="An extending block" class="transition-med" id="piston-image">
             <img src="art/piston_head.png" alt="An extending block" class="transition-med" id="piston-head-image">
             <br>

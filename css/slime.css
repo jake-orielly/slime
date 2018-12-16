@@ -107,6 +107,11 @@
     margin-bottom: .5rem;
 }
 
+.keyDiv {
+    position: relative;
+    display:inline-block;
+}
+
 .end-tutorial {
     margin-top: 1rem;
     padding: 1rem;

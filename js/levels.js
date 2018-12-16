@@ -1,8 +1,8 @@
 function level1() { 
-    player = new Block(0,0,[[]],"player");
+    player = new Block(1,1,[[]],"player");
     blocks = [];
     walls = [];
-    exitTiles = [[6,1]];
+    exitTiles = [[5,2]];
     drawBoard();
 }
 
