@@ -36,17 +36,21 @@ function movementAnimationMaster() {
         animationInterval = setInterval(function() {
             moveAnimation();
         }, 4000);
-    },1000);
+    },250);
 }
 
 function moveAnimation() {
     bounce('up-key','.');
+    setTimeout(function() {$("#tutorial-player").css('transform','translateY(-2rem)');},350);
     setTimeout(function() {
         bounce('right-key','.');
+        setTimeout(function() {$("#tutorial-player").css('transform','translate(5rem,-2rem)');},350);
         setTimeout(function() {
             bounce('down-key','.');
+            setTimeout(function() {$("#tutorial-player").css('transform','translate(5rem,2rem)');},350);
             setTimeout(function() {
                 bounce('left-key','.');
+                setTimeout(function() {$("#tutorial-player").css('transform','translateY(2rem)');},350);
             },1000);
         },1000);
     },1000);

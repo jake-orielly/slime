@@ -86,7 +86,7 @@
     text-align: center;
 }
 
-#bomb-tutorial, #piston-tutorial {
+#bomb-tutorial, #piston-tutorial, #move-tutorial {
     display: none;
 }
 
@@ -105,6 +105,11 @@
 #piston-tutorial-button {
     width: 7rem;
     margin-bottom: .5rem;
+}
+
+#tutorial-player {
+    transform: translateY(2rem);
+    transition: all 0.5s;
 }
 
 .keyDiv {
