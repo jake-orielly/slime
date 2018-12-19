@@ -80,6 +80,20 @@ function bomb1() {
     drawBoard();
 }
 
+function bomb3() {
+    player = new Block(1,1,[[-1,0]],"player_1");
+    blocks = [
+        new Block(2,3,[[0,1]],"block_1"),
+        new Block(4,1,[[]],"block"),
+        new Block(6,4,[[0,-1]],"block_1"),
+        new Block(2,6,[[0,-1]],"block_1"),
+        new Block(1,5,[[0,1]],"bomb_block_1"),
+        new Block(5,2,[[0,-1]],"bomb_block_1")];
+    walls = [];
+    exitTiles = [[2,5],[3,5],[6,1],[3,1]];
+    drawBoard();
+}
+
 function bomb2() {
     player = new Block(0,0,[[0,1]],"player_1");
     blocks = [
