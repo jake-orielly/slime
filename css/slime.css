@@ -151,3 +151,18 @@ button:focus {outline:0;}
     transition: .5s;
     -webkit-transition: .5s;
 }
+
+.exit_left {
+    transform: rotate(90deg);
+    -webkit-transform: rotate(90deg);
+}
+
+.exit_up {
+    transform: rotate(180deg);
+    -webkit-transform: rotate(180deg);
+}
+
+.exit_right {
+    transform: rotate(270deg);
+    -webkit-transform: rotate(270deg);
+}

@@ -9,13 +9,42 @@ var player;
 var offsets = [[0,1],[1,0],[0,-1],[-1,0]];
 var keyToDir = {65:[0,-1],37:[0,-1],83:[1,0],40:[1,0],68:[0,1],39:[0,1],87:[-1,0],38:[-1,0]}; // Maps a keypress code to a direction on the board
 var backgroundTile = function() {return '<img src="art/grass_' + (parseInt(Math.random()*4)+1) + '.png">';}
-var exitTile = '<img class="exit" src="art/exit_0.png">';
-var currLevel = 7;
+var currLevel = 2;
 var levels = [level1,level2,level3,level4,complexStick,complexStick2,bomb1,bomb3,bomb2,piston1,piston2,piston3,pistonDeSync,movingParts];
 var animationInterval;
 var canMove = true;
 levels[currLevel]();
 setupBlocks();
+
+function exitTile(y,x) {
+    var addon = '';
+    var dirMap = [];
+    var direction = ''; // Direction the block should be rotated
+    for(var i = 0; i < exitTiles.length; i++) {
+        var xDiff = exitTiles[i][0] - x;
+        var yDiff = exitTiles[i][1] - y;
+        if (Math.abs(xDiff) + Math.abs(yDiff) == 1) {
+            if (dirMap && dirMap[0] + xDiff == 0 && dirMap[1] + yDiff == 0) //If a tile on each side map to H block 
+                addon = '_H';
+            dirMap.push(xDiff);
+            dirMap.push(yDiff);
+        }
+    }
+    console.log(x,y,dirMap);
+    if (dirMap.length != 4)
+        addon = '';
+    for(var i = 2; i < dirMap.length; i++)
+        dirMap[(i%2)] += dirMap[i]
+    if (dirMap[1] == 1 && dirMap[0] + dirMap[1])
+        direction = '';
+    else if (dirMap[1] == -1 && dirMap[0] + dirMap[1])
+        direction = 'up';
+    else if (dirMap[0] == -1)
+        direction = 'left';
+    else
+        direction = 'right';
+    return '<img class="exit exit_' + direction + '" src="art/exit_' + dirMap.length/2 + addon +'.png">'
+};
 
 function blockKey(x,y) {
     return '' + x + ',' + y;
@@ -235,7 +264,7 @@ function drawBoard() {
     for (key in walls)
         document.getElementById(walls[key].y + ',' + walls[key].x).innerHTML += '<img class="block" src=' + walls[key].img + '>';
     for (var i = 0; i < exitTiles.length; i++) 
-        document.getElementById(exitTiles[i][1] + ',' + exitTiles[i][0]).innerHTML += exitTile;
+        document.getElementById(exitTiles[i][1] + ',' + exitTiles[i][0]).innerHTML += exitTile(exitTiles[i][1],exitTiles[i][0]);
     player.showBlock();
 }
 

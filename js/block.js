@@ -43,7 +43,7 @@ function Block(x,y,slime,img) {
         var temp = "";
         for (var i = 0; i < exitTiles.length; i++)
             if (arrayCompare([this.x,this.y],exitTiles[i]))
-                temp = exitTile;
+                temp = exitTile(this.y,this.x);
         document.getElementById(this.y + ',' + this.x).innerHTML = backgroundTile() + temp;
     }
 
