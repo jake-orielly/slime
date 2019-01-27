@@ -44,7 +44,7 @@ function Block(x,y,slime,img) {
         for (var i = 0; i < exitTiles.length; i++)
             if (arrayCompare([this.x,this.y],exitTiles[i]))
                 temp = exitTile(this.y,this.x);
-        document.getElementById(this.y + ',' + this.x).innerHTML = backgroundTile() + temp;
+        document.getElementById(this.y + ',' + this.x).innerHTML = backgroundTile(y,x) + temp;
     }
 
     this.fade = function() { // Makes this block fade from view
