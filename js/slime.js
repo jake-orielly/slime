@@ -8,8 +8,8 @@ var exitTiles;
 var player;
 var offsets = [[0,1],[1,0],[0,-1],[-1,0]];
 var keyToDir = {65:[0,-1],37:[0,-1],83:[1,0],40:[1,0],68:[0,1],39:[0,1],87:[-1,0],38:[-1,0]}; // Maps a keypress code to a direction on the board
-var backgroundTile = '<img src="art/grass.png">';
-var exitTile = '<img class="exit" src="art/exit.png">';
+var backgroundTile = function() {return '<img src="art/grass_' + (parseInt(Math.random()*4)+1) + '.png">';}
+var exitTile = '<img class="exit" src="art/exit_0.png">';
 var currLevel = 7;
 var levels = [level1,level2,level3,level4,complexStick,complexStick2,bomb1,bomb3,bomb2,piston1,piston2,piston3,pistonDeSync,movingParts];
 var animationInterval;
@@ -219,7 +219,8 @@ function drawBoard() {
         result += '<tr>';
         for (var j = 0; j < boardWidth; j++) {
             result += '<td id="' + i + ',' + j + '">';
-            result += backgroundTile;
+            temp = backgroundTile()
+            result += temp;
             result += '</td>';
         }
         result += '</tr>';
