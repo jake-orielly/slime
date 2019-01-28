@@ -8,7 +8,7 @@ var exitTiles;
 var player;
 var offsets = [[0,1],[1,0],[0,-1],[-1,0]];
 var keyToDir = {65:[0,-1],37:[0,-1],83:[1,0],40:[1,0],68:[0,1],39:[0,1],87:[-1,0],38:[-1,0]}; // Maps a keypress code to a direction on the board
-var currLevel = 2;
+var currLevel = 8;
 var levels = [level1,level2,level3,level4,complexStick,complexStick2,bomb1,bomb3,bomb2,piston1,piston2,piston3,pistonDeSync,movingParts];
 var animationInterval;
 var canMove = true;
@@ -34,12 +34,12 @@ function exitTile(y,x) {
             dirMap.push(yDiff);
         }
     }
-    console.log(x,y,dirMap);
     if (dirMap.length != 4)
         addon = '';
     for(var i = 2; i < dirMap.length; i++)
         dirMap[(i%2)] += dirMap[i]
-    if (dirMap[1] == 1 && dirMap[0] + dirMap[1])
+    console.log(x,y,dirMap);
+    if ((dirMap[1] == 1 && dirMap[0] + dirMap[1]) || (dirMap.length == 4 && dirMap[0] == 0 && dirMap[1] == 0 && dirMap[3]))
         direction = '';
     else if (dirMap[1] == -1 && dirMap[0] + dirMap[1])
         direction = 'up';
